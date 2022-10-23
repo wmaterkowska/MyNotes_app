@@ -8,13 +8,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
-    int noteId;
+    static int noteId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +32,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         if (noteId != -1) {
             editText.setText(MainActivity.notes.get(noteId));
         } else {
-            MainActivity.notes.add("");
-            noteId = MainActivity.notes.size() -1;
+            MainActivity.notes.add(0,"");
+            noteId = MainActivity.notes.indexOf("");
             MainActivity.arrayAdapter.notifyDataSetChanged();
         }
 
@@ -43,6 +47,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 MainActivity.notes.set(noteId, String.valueOf(charSequence));
                 MainActivity.arrayAdapter.notifyDataSetChanged();
+
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 HashSet<String> set = new HashSet(MainActivity.notes);

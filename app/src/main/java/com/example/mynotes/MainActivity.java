@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +22,10 @@ import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 
@@ -56,11 +60,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Collections.reverse(notes);
 
 
         // shared preferences to store the notes
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
+
         if (set == null) {
             notes.add("Example note");
         } else {
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, notes);
         listView.setAdapter(arrayAdapter);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            arrayAdapter.sort(Comparator.reverseOrder());
+            arrayAdapter.sort(Comparator.comparingInt(notes::indexOf));
         }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
