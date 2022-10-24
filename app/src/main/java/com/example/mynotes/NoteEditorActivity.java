@@ -11,6 +11,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.example.mynotes.model.Note;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.HashSet;
 public class NoteEditorActivity extends AppCompatActivity {
 
     static int noteId;
+    static MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +31,15 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
 
+        //ArrayList<String> noteList = mainActivity.retrieveOrderedNotes(mainActivity.notes);
+
         noteId = intent.getIntExtra("noteId", -1);
         if (noteId != -1) {
-            editText.setText(MainActivity.notes.get(noteId));
+            editText.setText(mainActivity.notes.get(noteId));
         } else {
-            MainActivity.notes.add(0,"");
-            noteId = MainActivity.notes.indexOf("");
+            MainActivity.addNote("", mainActivity.notes);
+            // MainActivity.notes.add(0,"");
+            //noteId = MainActivity.notes.indexOf("");
             MainActivity.arrayAdapter.notifyDataSetChanged();
         }
 
@@ -50,7 +56,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                HashSet<String> set = new HashSet(MainActivity.notes);
+                mainActivity.retrieveOrderedNotes(mainActivity.notes);
                 sharedPreferences.edit().putStringSet("notes", set).apply();
             }
 
