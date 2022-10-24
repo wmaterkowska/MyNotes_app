@@ -49,7 +49,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.notes);
 
-                sharedPreferences.edit().putString("notes", json).apply();
+                sharedPreferences.edit().putString("Notes", json).apply();
             }
 
             @Override

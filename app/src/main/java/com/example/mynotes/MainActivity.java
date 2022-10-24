@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         // shared preferences to store the notes
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("notes", null);
+        String json = sharedPreferences.getString("Notes", null);
         ArrayList<String> notesJson = gson.fromJson(json, ArrayList.class);
 
         if (notesJson == null) {
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                                 Gson gson = new Gson();
                                 String json = gson.toJson(notes);
 
-                                sharedPreferences.edit().putString("notes", json).apply();
+                                sharedPreferences.edit().putString("Notes", json).apply();
                             }
                         }).setNegativeButton("No", null).show();
                 return true;
