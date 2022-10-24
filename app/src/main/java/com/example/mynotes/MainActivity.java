@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,13 +20,11 @@ import android.widget.ListView;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONArray;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
         // shared preferences to store the notes
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("notes", null);
+        ArrayList<String> notesJson = gson.fromJson(json, ArrayList.class);
 
-        if (set == null) {
+        if (notesJson == null) {
             notes.add("Example note");
         } else {
-            notes = new ArrayList(set);
+            notes = new ArrayList(notesJson);
         }
 
         // floating action button
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
         // list view of the notes
         ListView listView = findViewById(R.id.listView);
-
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, notes);
         listView.setAdapter(arrayAdapter);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -113,8 +111,11 @@ public class MainActivity extends AppCompatActivity {
                                 notes.remove(itemToDelete);
                                 arrayAdapter.notifyDataSetChanged();
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                                HashSet<String> set = new HashSet(MainActivity.notes);
-                                sharedPreferences.edit().putStringSet("notes", set).apply();
+                                // HashSet<String> set = new HashSet(MainActivity.notes);
+                                Gson gson = new Gson();
+                                String json = gson.toJson(notes);
+
+                                sharedPreferences.edit().putString("notes", json).apply();
                             }
                         }).setNegativeButton("No", null).show();
                 return true;

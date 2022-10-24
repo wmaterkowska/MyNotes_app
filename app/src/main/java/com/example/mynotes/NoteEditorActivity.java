@@ -8,13 +8,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.EditText;
 
-import org.json.JSONArray;
-
-import java.util.ArrayList;
-import java.util.HashSet;
+import com.google.gson.Gson;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -50,8 +46,10 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                HashSet<String> set = new HashSet(MainActivity.notes);
-                sharedPreferences.edit().putStringSet("notes", set).apply();
+                Gson gson = new Gson();
+                String json = gson.toJson(MainActivity.notes);
+
+                sharedPreferences.edit().putString("notes", json).apply();
             }
 
             @Override
