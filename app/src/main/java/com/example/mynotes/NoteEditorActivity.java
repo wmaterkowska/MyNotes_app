@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Window;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
@@ -20,6 +21,8 @@ public class NoteEditorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
+        getSupportActionBar().hide();
+
 
         EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
