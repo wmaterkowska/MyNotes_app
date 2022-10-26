@@ -1,6 +1,8 @@
 package com.example.mynotes;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +10,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
+import android.widget.ActionMenuView;
 import android.widget.EditText;
+import android.widget.SearchView;
 
 import com.google.gson.Gson;
 
@@ -18,11 +25,35 @@ public class NoteEditorActivity extends AppCompatActivity {
     static int noteId;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.edit_menu, menu);
+
+        MenuItem colorChangeItem = menu.findItem(R.id.color);
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
-        getSupportActionBar().hide();
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
@@ -57,10 +88,10 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
-
-
     }
+
+
+
 }

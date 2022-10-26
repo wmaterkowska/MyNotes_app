@@ -7,13 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".NoteEditorActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/actionMenuView"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/teal_700"
-        tools:ignore="MissingConstraints">
-    </androidx.appcompat.widget.Toolbar>
 
     <EditText
         android:id="@+id/editText"
@@ -24,9 +17,7 @@
         android:inputType="textMultiLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/actionMenuView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
