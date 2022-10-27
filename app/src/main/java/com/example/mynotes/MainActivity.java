@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> notes = new ArrayList<>();
     static ArrayAdapter<String> arrayAdapter;
+
+    static ListView listView;
+
 
 
     @Override
@@ -86,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Collections.reverse(notes);
 
-        // shared preferences to store the notes
+        // shared preferences to store the notes ---------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Notes", null);
@@ -98,18 +102,12 @@ public class MainActivity extends AppCompatActivity {
             notes = new ArrayList(notesJson);
         }
 
-        // floating action button
-        FloatingActionButton fabAdd = findViewById(R.id.add_fab);
-        fabAdd = findViewById(R.id.add_fab);
-        fabAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
-            startActivity(intent);
-        });
 
-        // list view of the notes
-        ListView listView = findViewById(R.id.listView);
+        // list view of the notes ------------------------------------------------------------------
+        listView = findViewById(R.id.listView);
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, notes);
         listView.setAdapter(arrayAdapter);
+        listView.setTextFilterEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             arrayAdapter.sort(Comparator.comparingInt(notes::indexOf));
         }
@@ -150,6 +148,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+        // floating action button: add note --------------------------------------------------------
+        FloatingActionButton fabAdd = findViewById(R.id.add_fab);
+        fabAdd.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
+            startActivity(intent);
+        });
+
     }
 
 }
