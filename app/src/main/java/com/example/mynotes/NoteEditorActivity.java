@@ -3,7 +3,6 @@ package com.example.mynotes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.view.MenuItemCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,25 +17,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.widget.ActionMenuView;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Toolbar;
 
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.card.MaterialCardView;
+import com.example.mynotes.model.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
-import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
-
-import java.util.List;
-
 public class NoteEditorActivity extends AppCompatActivity {
 
-    static int noteId;
+    static int notePosition;
+    static Note note;
 
     CardView colorPalette;
 
@@ -65,7 +55,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                     colorPalette.setVisibility(View.INVISIBLE);
                 }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -95,13 +84,16 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
 
-        noteId = intent.getIntExtra("noteId", -1);
-        if (noteId != -1) {
-            editText.setText(MainActivity.notes.get(noteId));
+        notePosition = intent.getIntExtra("noteId", 0);
+        if (notePosition != 0) {
+            note = MainActivity.notes.get(notePosition);
+            editText.setText(note.getContent());
+            notePosition = MainActivity.notes.indexOf(note);
         } else {
-            MainActivity.notes.add(0,"");
-            noteId = MainActivity.notes.indexOf("");
-            MainActivity.arrayAdapter.notifyDataSetChanged();
+            note = new Note("");
+            MainActivity.notes.add(note);
+            notePosition = MainActivity.notes.indexOf(note);
+            MainActivity.noteAdapter.notifyDataSetChanged();
         }
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -112,15 +104,15 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.notes.set(noteId, String.valueOf(charSequence));
-                MainActivity.arrayAdapter.notifyDataSetChanged();
+                MainActivity.notes.get(notePosition).setContent(String.valueOf(charSequence));
+                MainActivity.noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.notes);
-
                 sharedPreferences.edit().putString("Notes", json).apply();
+
             }
 
             @Override
@@ -134,7 +126,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(noteId).setBackgroundColor(Color.parseColor( "#4CAF50"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#4CAF50"));
                     editText.setBackgroundColor(Color.parseColor("#4CAF50"));
                 }
             }
@@ -145,7 +137,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(noteId).setBackgroundColor(Color.parseColor( "#2196F3"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2196F3"));
                     editText.setBackgroundColor(Color.parseColor("#2196F3"));
                 }
             }
@@ -156,7 +148,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(noteId).setBackgroundColor(Color.parseColor( "#4CAF50"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#4CAF50"));
                     editText.setBackgroundColor(Color.parseColor("#4CAF50"));
                 }
             }
@@ -167,7 +159,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(noteId).setBackgroundColor(Color.parseColor( "#2196F3"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2196F3"));
                     editText.setBackgroundColor(Color.parseColor("#2196F3"));
                 }
             }
@@ -179,7 +171,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(noteId).setBackgroundColor(Color.parseColor( "#FFFFFF"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#FFFFFF"));
                     editText.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
             }
@@ -190,7 +182,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(noteId).setBackgroundColor(Color.parseColor( "#2196F3"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2196F3"));
                     editText.setBackgroundColor(Color.parseColor("#2196F3"));
                 }
             }

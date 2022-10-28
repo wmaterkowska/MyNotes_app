@@ -27,17 +27,22 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 
+import com.example.mynotes.adapters.NoteAdapter;
+import com.example.mynotes.model.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
-    static ArrayList<String> notes = new ArrayList<>();
-    static ArrayAdapter<String> arrayAdapter;
+    static ArrayList<Note> notes = new ArrayList<>();
+    static NoteAdapter noteAdapter;
 
     static ListView listView;
 
@@ -56,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
-                for (String note: notes) {
-                    if(note.contains(query)){
-                        arrayAdapter.getFilter().filter(query);
+                for (Note note: notes) {
+                    if(note.getContent().contains(query)){
+                        noteAdapter.getFilter().filter(query);
                     }else{
                         Toast.makeText(MainActivity.this, "No Match found",Toast.LENGTH_LONG).show();
                     }
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                arrayAdapter.getFilter().filter(newText);
+                noteAdapter.getFilter().filter(newText);
                 return false;
             }
 
@@ -90,26 +95,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Collections.reverse(notes);
 
+
         // shared preferences to store the notes ---------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Notes", null);
-        ArrayList<String> notesJson = gson.fromJson(json, ArrayList.class);
+        Type typeArrayNotes = new TypeToken<ArrayList<Note>>(){}.getType();
+        ArrayList<Note> notesJson = gson.fromJson(json, typeArrayNotes);
 
         if (notesJson == null) {
-            notes.add("Example note");
+            Note exampleNote = new Note("Example note");
+            notes.add(exampleNote);
         } else {
-            notes = new ArrayList(notesJson);
+            notes = notesJson;
         }
 
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, notes);
-        listView.setAdapter(arrayAdapter);
+        noteAdapter = new NoteAdapter(notes, this);
+        listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            arrayAdapter.sort(Comparator.comparingInt(notes::indexOf));
+            noteAdapter.sort(Comparator.comparingInt(notes::indexOf));
         }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -136,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 notes.remove(itemToDelete);
-                                arrayAdapter.notifyDataSetChanged();
+                                noteAdapter.notifyDataSetChanged();
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                                 // HashSet<String> set = new HashSet(MainActivity.notes);
                                 Gson gson = new Gson();
