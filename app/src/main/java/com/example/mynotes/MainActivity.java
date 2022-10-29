@@ -3,6 +3,8 @@ package com.example.mynotes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuItemCompat;
 
 import android.app.SearchManager;
@@ -12,12 +14,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Note> notes = new ArrayList<>();
     static NoteAdapter noteAdapter;
     static ListView listView;
+    static CardView themeChange;
 
 
     @Override
@@ -55,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.notes_menu, menu);
 
         MenuItem searchViewItem = menu.findItem(R.id.search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
 
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -70,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 noteAdapter.resetData();
                 return false;
             }
-
         });
         return super.onCreateOptionsMenu(menu);
 
@@ -78,9 +82,36 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        super.onOptionsItemSelected(item);
-        return false;
+        // super.onOptionsItemSelected(item);
+
+        int id = item.getItemId();
+        switch (id){
+            case R.id.settings:
+                themeChange = findViewById(R.id.themeCard);
+                if (themeChange.getVisibility() == View.INVISIBLE) {
+                    themeChange.setVisibility(View.VISIBLE);
+                } else {
+                    themeChange.setVisibility(View.INVISIBLE);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Rect viewRect = new Rect();
+        themeChange = findViewById(R.id.themeCard);
+
+        themeChange.getGlobalVisibleRect(viewRect);
+        if (themeChange.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+            themeChange.setVisibility(View.INVISIBLE);
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final int itemToDelete = i;
                 new AlertDialog.Builder(MainActivity.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this note?")
+                        .setTitle(" ")
+                        .setIcon(R.drawable.ic_baseline_delete_24)
+                        .setTitle("Do you want to delete this note?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -153,6 +184,28 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
             startActivity(intent);
         });
+
+
+        // floating action button: set the light mode ----------------------------------------------
+        FloatingActionButton fabLight = findViewById(R.id.light);
+        fabLight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                themeChange.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // floating action button: set the dark mode -----------------------------------------------
+        FloatingActionButton fabDark = findViewById(R.id.dark);
+        fabDark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                themeChange.setVisibility(View.VISIBLE);
+            }
+        });
+
 
     }
 
