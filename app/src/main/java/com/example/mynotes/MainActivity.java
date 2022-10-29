@@ -19,12 +19,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ViewAnimator;
 
 
 import com.example.mynotes.adapters.NoteAdapter;
@@ -43,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<Note> notes = new ArrayList<>();
     static NoteAdapter noteAdapter;
-
     static ListView listView;
-
 
 
     @Override
@@ -61,20 +61,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
-                for (Note note: notes) {
-                    if(note.getContent().contains(query)){
-                        noteAdapter.getFilter().filter(query);
-                    }else{
-                        Toast.makeText(MainActivity.this, "No Match found",Toast.LENGTH_LONG).show();
-                    }
-                    return false;
-                }
-            return false;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 noteAdapter.getFilter().filter(newText);
+                noteAdapter.resetData();
                 return false;
             }
 
@@ -141,11 +134,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 notes.remove(itemToDelete);
                                 noteAdapter.notifyDataSetChanged();
+                                noteAdapter.resetData();
+
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                                // HashSet<String> set = new HashSet(MainActivity.notes);
                                 Gson gson = new Gson();
                                 String json = gson.toJson(notes);
-
                                 sharedPreferences.edit().putString("Notes", json).apply();
                             }
                         }).setNegativeButton("No", null).show();
