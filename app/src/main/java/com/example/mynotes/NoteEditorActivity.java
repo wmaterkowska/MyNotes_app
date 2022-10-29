@@ -38,7 +38,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
+    // options menu on the title bar ---------------------------------------------------------------
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -57,7 +57,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -84,14 +83,14 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText editText = findViewById(R.id.editText);
         Intent intent = getIntent();
 
-        notePosition = intent.getIntExtra("noteId", 0);
-        if (notePosition != 0) {
+        notePosition = intent.getIntExtra("noteId", -1);
+        if (notePosition != -1) {
             note = MainActivity.notes.get(notePosition);
             editText.setText(note.getContent());
             notePosition = MainActivity.notes.indexOf(note);
         } else {
             note = new Note("");
-            MainActivity.notes.add(note);
+            MainActivity.notes.add(0, note);
             notePosition = MainActivity.notes.indexOf(note);
             MainActivity.noteAdapter.notifyDataSetChanged();
         }
@@ -99,7 +98,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -120,52 +118,88 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
-
-        FloatingActionButton fabGreen = findViewById(R.id.green);
+        // fab for changing color to PINK ----------------------------------------------------------
+        FloatingActionButton fabGreen = findViewById(R.id.pink);
         fabGreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#4CAF50"));
-                    editText.setBackgroundColor(Color.parseColor("#4CAF50"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#E8B2B5"));
+                    editText.setBackgroundColor(Color.parseColor("#E8B2B5"));
+                    note.setBackgroundColor("#E8B2B5");
+
+                    MainActivity.notes.set(notePosition, note);
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.notes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
         });
 
+        // fab for changing color to BLUE ----------------------------------------------------------
         FloatingActionButton fabBlue = findViewById(R.id.blue);
         fabBlue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2196F3"));
-                    editText.setBackgroundColor(Color.parseColor("#2196F3"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2E4F6C"));
+                    editText.setBackgroundColor(Color.parseColor("#2E4F6C"));
+                    note.setBackgroundColor("#2E4F6C");
+
+                    MainActivity.notes.set(notePosition, note);
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.notes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
+
                 }
             }
         });
 
-        FloatingActionButton fabPink = findViewById(R.id.pink);
+        // fab for changing color to GREEN ---------------------------------------------------------
+        FloatingActionButton fabPink = findViewById(R.id.green);
         fabPink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#4CAF50"));
-                    editText.setBackgroundColor(Color.parseColor("#4CAF50"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#7E9C65"));
+                    editText.setBackgroundColor(Color.parseColor("#7E9C65"));
+                    note.setBackgroundColor("#7E9C65");
+
+                    MainActivity.notes.set(notePosition, note);
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.notes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
         });
 
+        // fab for changing color to YELLOW --------------------------------------------------------
         FloatingActionButton fabYellow = findViewById(R.id.yellow);
         fabYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2196F3"));
-                    editText.setBackgroundColor(Color.parseColor("#2196F3"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#D1C357"));
+                    editText.setBackgroundColor(Color.parseColor("#D1C357"));
+                    note.setBackgroundColor("#D1C357");
+
+                    MainActivity.notes.set(notePosition, note);
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.notes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
         });
 
-
+        // fab for changing color to WHITE ---------------------------------------------------------
         FloatingActionButton fabWhite = findViewById(R.id.white);
         fabWhite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,23 +207,42 @@ public class NoteEditorActivity extends AppCompatActivity {
                 if (MainActivity.listView != null) {
                     MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#FFFFFF"));
                     editText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    note.setBackgroundColor("#FFFFFF");
+
+                    MainActivity.notes.set(notePosition, note);
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.notes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
         });
 
-        FloatingActionButton fabRed = findViewById(R.id.red);
+        // fab for changing color to BLACK ---------------------------------------------------------
+        FloatingActionButton fabRed = findViewById(R.id.black);
         fabRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2196F3"));
-                    editText.setBackgroundColor(Color.parseColor("#2196F3"));
+                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor("#111111"));
+                    editText.setBackgroundColor(Color.parseColor("#111111"));
+                    note.setBackgroundColor("#111111");
+
+                    MainActivity.notes.set(notePosition, note);
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.notes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
         });
 
-
-
+        // changing the background color
+        if(note.getBackgroundColor() != null) {
+            editText.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
+        }
     }
 
 

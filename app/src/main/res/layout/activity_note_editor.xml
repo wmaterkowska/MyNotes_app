@@ -41,11 +41,20 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/pink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:backgroundTint="#E8B2B5"
+                app:fabSize="mini"
+                app:elevation="3dp"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                app:backgroundTint="#2196F3"
+                app:backgroundTint="#2E4F6C"
                 app:fabSize="mini"
                 app:elevation="3dp"/>
 
@@ -54,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                app:backgroundTint="#4CAF50"
+                app:backgroundTint="#7E9C65"
                 app:fabSize="mini"
                 app:elevation="3dp"/>
 
@@ -63,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                app:backgroundTint="#CDDC39"
+                app:backgroundTint="#D1C357"
                 app:fabSize="mini"
                 app:elevation="3dp"/>
 
@@ -77,20 +86,11 @@
                 app:elevation="3dp"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/red"
+                android:id="@+id/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                app:backgroundTint="#DD746C"
-                app:fabSize="mini"
-                app:elevation="3dp"/>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/pink"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:backgroundTint="#D496DF"
+                app:backgroundTint="#111111"
                 app:fabSize="mini"
                 app:elevation="3dp"/>
 

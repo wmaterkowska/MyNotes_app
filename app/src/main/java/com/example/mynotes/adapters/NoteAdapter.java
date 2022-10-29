@@ -1,6 +1,7 @@
 package com.example.mynotes.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.model.Note;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
@@ -45,21 +48,28 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
     public View getView(int position, View listView, ViewGroup parent) {
         View v = listView;
+        TextView tv;
+        Note n = noteList.get(position);
 
         NoteHolder holder = new NoteHolder();
 
         if (listView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.row_layout, null);
+            tv = (TextView) v.findViewById(R.id.content);
 
-            TextView tv = (TextView) v.findViewById(R.id.content);
             holder.contentView = tv;
             v.setTag(holder);
+
         } else {
             holder = (NoteHolder) v.getTag();
+
         }
 
-        Note n = noteList.get(position);
+        if(getItem(position).getBackgroundColor() != null) {
+            v.setBackgroundColor(Color.parseColor(getItem(position).getBackgroundColor()));
+        }
+
         holder.contentView.setText(n.getContent());
 
         return v;

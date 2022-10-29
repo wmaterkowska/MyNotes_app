@@ -41,7 +41,7 @@ import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
-    static ArrayList<Note> notes = new ArrayList<>();
+    public static ArrayList<Note> notes = new ArrayList<>();
     static NoteAdapter noteAdapter;
 
     static ListView listView;
@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Collections.reverse(notes);
 
-
         // shared preferences to store the notes ---------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -116,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
         noteAdapter = new NoteAdapter(notes, this);
         listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            noteAdapter.sort(Comparator.comparingInt(notes::indexOf));
-        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

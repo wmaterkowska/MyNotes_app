@@ -5,14 +5,14 @@ import java.util.Random;
 
 public class Note {
 
-    private int id = 0;
+    private int id;
     private String content;
     private String backgroundColor;
     private LocalDateTime dateTime;
 
     public Note(String content) {
         this.content = content;
-        this.id += 1;
+        id = new Random().nextInt();
     }
 
     public long getId() {
