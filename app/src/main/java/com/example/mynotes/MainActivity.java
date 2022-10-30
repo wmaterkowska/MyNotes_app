@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<Note> notes = new ArrayList<>();
     static NoteAdapter noteAdapter;
-    static ListView listView;
+    public static ListView listView;
     static CardView themeChange;
 
 

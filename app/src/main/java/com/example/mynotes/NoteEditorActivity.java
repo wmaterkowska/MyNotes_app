@@ -1,5 +1,7 @@
 package com.example.mynotes;
 
+import static com.example.mynotes.R.*;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -43,13 +45,13 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        colorPalette = findViewById(R.id.colorPaletteCard);
+        colorPalette = findViewById(id.colorPaletteCard);
         
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
-            case R.id.color:
+            case id.color:
                 if (colorPalette.getVisibility() == View.INVISIBLE){
                     colorPalette.setVisibility(View.VISIBLE);
                 } else {
@@ -62,7 +64,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
-        colorPalette = findViewById(R.id.colorPaletteCard);
+        colorPalette = findViewById(id.colorPaletteCard);
 
         colorPalette.getGlobalVisibleRect(viewRect);
         if (colorPalette.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
@@ -76,12 +78,14 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_note_editor);
+        setContentView(layout.activity_note_editor);
+
+        MainActivity.listView.setAdapter(MainActivity.noteAdapter);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        EditText editText = findViewById(R.id.editText);
+        EditText editText = findViewById(id.editText);
         Intent intent = getIntent();
 
         notePosition = intent.getIntExtra("noteId", -1);
@@ -119,15 +123,18 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
+
         // fab for changing color to PINK ----------------------------------------------------------
-        FloatingActionButton fabGreen = findViewById(R.id.pink);
+        FloatingActionButton fabGreen = findViewById(id.pink);
         fabGreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#E8B2B5"));
                     editText.setBackgroundColor(Color.parseColor("#E8B2B5"));
                     note.setBackgroundColor("#E8B2B5");
+
+                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    card.setCardBackgroundColor(Color.parseColor( "#E8B2B5"));
 
                     MainActivity.notes.set(notePosition, note);
 
@@ -140,7 +147,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         // fab for changing color to BLUE ----------------------------------------------------------
-        FloatingActionButton fabBlue = findViewById(R.id.blue);
+        FloatingActionButton fabBlue = findViewById(id.blue);
         fabBlue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,7 +168,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         // fab for changing color to GREEN ---------------------------------------------------------
-        FloatingActionButton fabPink = findViewById(R.id.green);
+        FloatingActionButton fabPink = findViewById(id.green);
         fabPink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -181,7 +188,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         // fab for changing color to YELLOW --------------------------------------------------------
-        FloatingActionButton fabYellow = findViewById(R.id.yellow);
+        FloatingActionButton fabYellow = findViewById(id.yellow);
         fabYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,7 +208,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         // fab for changing color to WHITE ---------------------------------------------------------
-        FloatingActionButton fabWhite = findViewById(R.id.white);
+        FloatingActionButton fabWhite = findViewById(id.white);
         fabWhite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -226,7 +233,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         // fab for changing color to BLACK ---------------------------------------------------------
-        FloatingActionButton fabRed = findViewById(R.id.black);
+        FloatingActionButton fabRed = findViewById(id.black);
         fabRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
