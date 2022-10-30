@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
         // getting users choice of light/dark mode from SharedPreferences --------------------------
         SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
         int choice = settingsPreferences.getInt("Mode", 0);
-
         if (choice == 1) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         } else if (choice == 2) {
@@ -177,13 +176,13 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 notes.remove(itemToDelete);
-                                noteAdapter.notifyDataSetChanged();
-                                noteAdapter.resetData();
 
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                                 Gson gson = new Gson();
                                 String json = gson.toJson(notes);
                                 sharedPreferences.edit().putString("Notes", json).apply();
+
+                                listView.setAdapter(noteAdapter);
                             }
                         }).setNegativeButton("No", null).show();
                 return true;

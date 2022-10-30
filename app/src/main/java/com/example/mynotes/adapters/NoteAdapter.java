@@ -83,8 +83,6 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         public TextView contentView;
     }
 
-
-
     @Override
     public Filter getFilter() {
         if (noteFilter == null) {
@@ -92,6 +90,12 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         }
         return noteFilter;
     }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
 
     private class NoteFilter extends Filter {
 

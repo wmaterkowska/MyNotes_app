@@ -2,6 +2,7 @@ package com.example.mynotes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Context;
@@ -206,8 +207,13 @@ public class NoteEditorActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
                     MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#FFFFFF"));
+                    int mode = AppCompatDelegate.getDefaultNightMode();
+                    if (mode == 1) {
+                        note.setBackgroundColor(null);
+                    } else if (mode == 2){
+                        note.setBackgroundColor("#FFFFFF");
+                    }
                     editText.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                    note.setBackgroundColor("#FFFFFF");
 
                     MainActivity.notes.set(notePosition, note);
 
@@ -226,8 +232,14 @@ public class NoteEditorActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
                     MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor("#111111"));
+                    int mode = AppCompatDelegate.getDefaultNightMode();
+                    if (mode == 2) {
+                        note.setBackgroundColor(null);
+                    } else if (mode == 1){
+                        note.setBackgroundColor("#111111");
+                    }
                     editText.setBackgroundColor(Color.parseColor("#111111"));
-                    note.setBackgroundColor("#111111");
+
 
                     MainActivity.notes.set(notePosition, note);
 
