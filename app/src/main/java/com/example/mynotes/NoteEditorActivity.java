@@ -152,9 +152,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#2E4F6C"));
                     editText.setBackgroundColor(Color.parseColor("#2E4F6C"));
                     note.setBackgroundColor("#2E4F6C");
+
+                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    card.setCardBackgroundColor(Color.parseColor( "#2E4F6C"));
 
                     MainActivity.notes.set(notePosition, note);
 
@@ -173,9 +175,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#7E9C65"));
                     editText.setBackgroundColor(Color.parseColor("#7E9C65"));
                     note.setBackgroundColor("#7E9C65");
+
+                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    card.setCardBackgroundColor(Color.parseColor( "#7E9C65"));
 
                     MainActivity.notes.set(notePosition, note);
 
@@ -193,9 +197,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#D1C357"));
                     editText.setBackgroundColor(Color.parseColor("#D1C357"));
                     note.setBackgroundColor("#D1C357");
+
+                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    card.setCardBackgroundColor(Color.parseColor( "#D1C357"));
 
                     MainActivity.notes.set(notePosition, note);
 
@@ -213,7 +219,6 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor( "#FFFFFF"));
                     int mode = AppCompatDelegate.getDefaultNightMode();
                     if (mode == 1) {
                         note.setBackgroundColor(null);
@@ -221,6 +226,9 @@ public class NoteEditorActivity extends AppCompatActivity {
                         note.setBackgroundColor("#FFFFFF");
                     }
                     editText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
+                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    card.setCardBackgroundColor(Color.parseColor( "#FFFFFF"));
 
                     MainActivity.notes.set(notePosition, note);
 
@@ -238,7 +246,6 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
-                    MainActivity.listView.getChildAt(notePosition).setBackgroundColor(Color.parseColor("#111111"));
                     int mode = AppCompatDelegate.getDefaultNightMode();
                     if (mode == 2) {
                         note.setBackgroundColor(null);
@@ -247,6 +254,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                     }
                     editText.setBackgroundColor(Color.parseColor("#111111"));
 
+                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    card.setCardBackgroundColor(Color.parseColor( "#111111"));
 
                     MainActivity.notes.set(notePosition, note);
 

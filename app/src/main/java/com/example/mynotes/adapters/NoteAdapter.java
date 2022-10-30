@@ -10,15 +10,12 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
-import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.model.Note;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
@@ -69,7 +66,8 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
 
         if (getItem(position).getBackgroundColor() != null) {
-            v.findViewById(R.id.cardView).setBackgroundColor(Color.parseColor(getItem(position).getBackgroundColor()));
+            CardView card1 = v.findViewById(R.id.cardView);
+            card1.setCardBackgroundColor(Color.parseColor(getItem(position).getBackgroundColor()));
         }
 
         holder.contentView.setText(n.getContent());
