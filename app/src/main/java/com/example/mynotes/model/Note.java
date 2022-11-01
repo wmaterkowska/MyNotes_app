@@ -1,7 +1,9 @@
 package com.example.mynotes.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Note {
 
@@ -9,10 +11,13 @@ public class Note {
     private String content;
     private String backgroundColor;
     private LocalDateTime dateTime;
+    private Set<String> folders = new HashSet<>();
 
     public Note(String content) {
         this.content = content;
         id = new Random().nextInt();
+        folders.add("Notes");
+        folders.add("All Notes");
     }
 
     public long getId() {
@@ -44,4 +49,18 @@ public class Note {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
+
+    public Set<String> getFolders() {
+        return folders;
+    }
+
+    public void setFolders(Set<String> folders) {
+        this.folders = folders;
+    }
+
+    public void addFolder(String folder) {
+        this.folders.add(folder);
+    }
+
+
 }

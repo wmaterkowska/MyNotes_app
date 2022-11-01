@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +25,6 @@ import android.widget.SearchView;
 
 import com.example.mynotes.adapters.NoteAdapter;
 import com.example.mynotes.model.Note;
-import com.example.mynotes.services.SharedPreferencesService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,12 +35,15 @@ import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static ArrayList<Note> notes = new ArrayList<>();
+    public static ArrayList<Note> allNotes = new ArrayList<>();
+    public static ArrayList<Note> notesToShow = new ArrayList<>();
+
     static NoteAdapter noteAdapter;
     public static ListView listView;
     static CardView themeChange;
 
-    private SharedPreferencesService sharedPreferencesService;
+    String folder = "Notes";
+
 
     //==============================================================================================
     @Override
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Collections.reverse(notes);
+        Collections.reverse(allNotes);
 
         // getting users choice of light/dark mode from SharedPreferences --------------------------
         SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        // shared preferences to store the notes ---------------------------------------------------
+        // getting notes from sharedPreferences ----------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Notes", null);
@@ -133,15 +134,21 @@ public class MainActivity extends AppCompatActivity {
 
         if (notesJson == null) {
             Note exampleNote = new Note("Example note");
-            notes.add(exampleNote);
+            allNotes.add(exampleNote);
         } else {
-            notes = notesJson;
+            allNotes = notesJson;
         }
 
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
-        noteAdapter = new NoteAdapter(notes, this);
+
+        for (Note note : allNotes) {
+            if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
+                notesToShow.add(note);
+            }
+        }
+        noteAdapter = new NoteAdapter(notesToShow, this);
         listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
 
@@ -149,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                int actualPosition = notes.indexOf(adapterView.getItemAtPosition(i));
+                int actualPosition = allNotes.indexOf(adapterView.getItemAtPosition(i));
 
                 Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
                 intent.putExtra("noteId", actualPosition);
@@ -168,11 +175,12 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                notes.remove(itemToDelete);
+                                allNotes.get(itemToDelete).addFolder("Recycle Bin");
+                                notesToShow.remove(itemToDelete);
 
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                                 Gson gson = new Gson();
-                                String json = gson.toJson(notes);
+                                String json = gson.toJson(allNotes);
                                 sharedPreferences.edit().putString("Notes", json).apply();
 
                                 listView.setAdapter(noteAdapter);

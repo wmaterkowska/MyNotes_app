@@ -75,6 +75,8 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
 
+    // ON CREATE
+    //==============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,19 +92,22 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         notePosition = intent.getIntExtra("noteId", -1);
         if (notePosition != -1) {
-            note = MainActivity.notes.get(notePosition);
+            note = MainActivity.notesToShow.get(notePosition);
             editText.setText(note.getContent());
-            notePosition = MainActivity.notes.indexOf(note);
+            notePosition = MainActivity.notesToShow.indexOf(note);
         } else {
             note = new Note("");
-            MainActivity.notes.add(0, note);
-            notePosition = MainActivity.notes.indexOf(note);
+            MainActivity.notesToShow.add(0, note);
+            MainActivity.allNotes.add(0,note);
+            notePosition = MainActivity.notesToShow.indexOf(note);
             MainActivity.noteAdapter.notifyDataSetChanged();
         }
 
+
+        MainActivity.allNotes.retainAll(MainActivity.notesToShow);
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = gson.toJson(MainActivity.notes);
+        String json = gson.toJson(MainActivity.allNotes);
         sharedPreferences.edit().putString("Notes", json).apply();
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -112,13 +117,14 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.notes.get(notePosition).setContent(String.valueOf(charSequence));
+                MainActivity.notesToShow.get(notePosition).setContent(String.valueOf(charSequence));
                 MainActivity.noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
+                MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 Gson gson = new Gson();
-                String json = gson.toJson(MainActivity.notes);
+                String json = gson.toJson(MainActivity.allNotes);
                 sharedPreferences.edit().putString("Notes", json).apply();
             }
 
@@ -141,11 +147,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#E8B2B5"));
 
-                    MainActivity.notes.set(notePosition, note);
+                    MainActivity.notesToShow.set(notePosition, note);
 
+                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.notes);
+                    String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
@@ -163,11 +170,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#2E4F6C"));
 
-                    MainActivity.notes.set(notePosition, note);
+                    MainActivity.notesToShow.set(notePosition, note);
 
+                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.notes);
+                    String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
 
                 }
@@ -186,11 +194,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#7E9C65"));
 
-                    MainActivity.notes.set(notePosition, note);
+                    MainActivity.notesToShow.set(notePosition, note);
 
+                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.notes);
+                    String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
@@ -208,11 +217,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#D1C357"));
 
-                    MainActivity.notes.set(notePosition, note);
+                    MainActivity.notesToShow.set(notePosition, note);
 
+                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.notes);
+                    String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
@@ -235,11 +245,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#FFFFFF"));
 
-                    MainActivity.notes.set(notePosition, note);
+                    MainActivity.notesToShow.set(notePosition, note);
 
+                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.notes);
+                    String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
@@ -262,11 +273,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#111111"));
 
-                    MainActivity.notes.set(notePosition, note);
+                    MainActivity.notesToShow.set(notePosition, note);
 
+                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.notes);
+                    String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
                 }
             }
