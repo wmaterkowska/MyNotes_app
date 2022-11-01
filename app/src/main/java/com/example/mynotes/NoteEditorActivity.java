@@ -100,6 +100,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             MainActivity.noteAdapter.notifyDataSetChanged();
         }
 
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = gson.toJson(MainActivity.notes);
+        sharedPreferences.edit().putString("Notes", json).apply();
+
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -115,13 +120,13 @@ public class NoteEditorActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.notes);
                 sharedPreferences.edit().putString("Notes", json).apply();
-
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
         });
+
 
 
         // fab for changing color to PINK ----------------------------------------------------------
