@@ -17,4 +17,20 @@
         android:icon="@drawable/ic_baseline_settings_24"
         app:showAsAction="ifRoom|withText" />
 
+    <item
+        android:id="@+id/folders"
+        android:title="Labels"
+        android:icon="@drawable/ic_baseline_label_24"
+        app:showAsAction="ifRoom|withText">
+        <menu
+            android:id="@+id/folders_menu">
+            <item android:id="@+id/notes"
+                android:title="Notes" />
+            <item android:id="@+id/recycle_bin"
+                android:title="Recycle Bin" />
+            <item android:id="@+id/add_folder"
+                android:title="Add Folder" />
+        </menu>
+    </item>
+
 </menu>

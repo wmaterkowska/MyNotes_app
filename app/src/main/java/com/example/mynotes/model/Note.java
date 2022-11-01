@@ -1,6 +1,7 @@
 package com.example.mynotes.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Note {
@@ -9,10 +10,14 @@ public class Note {
     private String content;
     private String backgroundColor;
     private LocalDateTime dateTime;
+    private ArrayList<String> folders;
 
     public Note(String content) {
         this.content = content;
         id = new Random().nextInt();
+        folders = new ArrayList<>();
+        folders.add("AllNotes");
+        folders.add("Notes");
     }
 
     public long getId() {
@@ -44,4 +49,22 @@ public class Note {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
+
+    public ArrayList<String> getFolders() {
+        return folders;
+    }
+
+    public void setFolders(ArrayList<String> folders) {
+        this.folders = folders;
+    }
+
+    public void addFolder(String folder) {
+        this.folders.add(folder);
+    }
+
+    public void deleteFolder(String folder) {
+        this.folders.remove(folder);
+    }
+
+
 }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.menu.SubMenuBuilder;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuItemCompat;
 
@@ -12,12 +13,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import android.widget.SearchView;
 import com.example.mynotes.adapters.NoteAdapter;
 import com.example.mynotes.model.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.internal.NavigationSubMenu;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -36,10 +38,12 @@ import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static ArrayList<Note> notes = new ArrayList<>();
+    public static ArrayList<Note> allNotes = new ArrayList<>();
     static NoteAdapter noteAdapter;
     public static ListView listView;
     static CardView themeChange;
+    public static ArrayList<Note> notesToShow;
+    private String folder = "Notes";
 
 
     @Override
@@ -83,6 +87,29 @@ public class MainActivity extends AppCompatActivity {
                     themeChange.setVisibility(View.INVISIBLE);
                 }
                 return true;
+            case R.id.notes:
+                folder = "Notes";
+                notesToShow.clear();
+                for (Note note : allNotes) {
+                    if (note.getFolders().contains(folder)){
+                        notesToShow.add(note);
+                    }
+                }
+                listView.setAdapter(noteAdapter);
+                return true;
+            case R.id.recycle_bin:
+                folder = "RecycleBin";
+                notesToShow.clear();
+                for (Note note : allNotes) {
+                    if (note.getFolders().contains(folder)){
+                        notesToShow.add(note);
+                    }
+                }
+                listView.setAdapter(noteAdapter);
+                return true;
+            case R.id.add_folder:
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -106,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Collections.reverse(notes);
+        Collections.reverse(allNotes);
 
         // getting users choice of light/dark mode from SharedPreferences --------------------------
         SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
@@ -129,15 +156,22 @@ public class MainActivity extends AppCompatActivity {
 
         if (notesJson == null) {
             Note exampleNote = new Note("Example note");
-            notes.add(exampleNote);
+            allNotes.add(exampleNote);
         } else {
-            notes = notesJson;
+            allNotes = notesJson;
         }
 
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
-        noteAdapter = new NoteAdapter(notes, this);
+        notesToShow = new ArrayList<Note>();
+        for (Note note : allNotes) {
+            if (note.getFolders().contains(folder)){
+                notesToShow.add(note);
+            }
+        }
+        noteAdapter = new NoteAdapter(notesToShow, this);
+
         listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
 
@@ -145,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                int actualPosition = notes.indexOf(adapterView.getItemAtPosition(i));
+                int actualPosition = allNotes.indexOf(adapterView.getItemAtPosition(i));
 
                 Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
                 intent.putExtra("noteId", actualPosition);
@@ -164,11 +198,13 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                notes.remove(itemToDelete);
+                                allNotes.get(itemToDelete).deleteFolder("Notes");
+                                allNotes.get(itemToDelete).addFolder("RecycleBin");
+                                notesToShow.remove(itemToDelete);
 
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                                 Gson gson = new Gson();
-                                String json = gson.toJson(notes);
+                                String json = gson.toJson(allNotes);
                                 sharedPreferences.edit().putString("Notes", json).apply();
 
                                 listView.setAdapter(noteAdapter);
