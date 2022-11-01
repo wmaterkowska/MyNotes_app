@@ -26,6 +26,7 @@ import android.widget.SearchView;
 
 import com.example.mynotes.adapters.NoteAdapter;
 import com.example.mynotes.model.Note;
+import com.example.mynotes.services.SharedPreferencesService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     public static ListView listView;
     static CardView themeChange;
 
+    private SharedPreferencesService sharedPreferencesService;
 
+    //==============================================================================================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -101,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-
+    // ON CREATE
+    //==============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
