@@ -11,6 +11,14 @@
         app:showAsAction="ifRoom|withText"
         app:actionViewClass="android.widget.SearchView"/>
 
+
+    <item
+        android:id="@+id/folders"
+        android:title="Folders"
+        android:icon="@drawable/ic_baseline_label_24"
+        app:showAsAction="ifRoom|withText" />
+
+
     <item
         android:id="@+id/settings"
         android:title="Settings"

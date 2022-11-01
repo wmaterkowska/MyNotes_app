@@ -19,19 +19,28 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 
 import com.example.mynotes.adapters.NoteAdapter;
 import com.example.mynotes.model.Note;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
     static NoteAdapter noteAdapter;
     public static ListView listView;
-    static CardView themeChange;
+
+    private static CardView themeChange;
+    private static CardView foldersCard;
 
     String folder = "Notes";
-
+    ArrayList<String> folders = new ArrayList<>(Arrays.asList("All Notes", "Notes", "Recycle Bin"));
 
     //==============================================================================================
     @Override
@@ -80,13 +91,20 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id){
             case R.id.settings:
-                themeChange = findViewById(R.id.themeCard);
+                themeChange = findViewById(R.id.theme_card);
                 if (themeChange.getVisibility() == View.INVISIBLE) {
                     themeChange.setVisibility(View.VISIBLE);
                 } else {
                     themeChange.setVisibility(View.INVISIBLE);
                 }
                 return true;
+            case R.id.folders:
+                foldersCard = findViewById(R.id.folders_card);
+                if (foldersCard.getVisibility() == View.INVISIBLE) {
+                    foldersCard.setVisibility(View.VISIBLE);
+                } else {
+                    foldersCard.setVisibility(View.INVISIBLE);
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -95,16 +113,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
-        themeChange = findViewById(R.id.themeCard);
+        themeChange = findViewById(R.id.theme_card);
+        foldersCard = findViewById(R.id.folders_card);
 
         themeChange.getGlobalVisibleRect(viewRect);
         if (themeChange.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
             themeChange.setVisibility(View.INVISIBLE);
             return true;
         }
+
+        foldersCard.getGlobalVisibleRect(viewRect);
+        if (foldersCard.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+            foldersCard.setVisibility(View.INVISIBLE);
+            return true;
+        }
+
         return super.dispatchTouchEvent(ev);
     }
 
+    //==============================================================================================
     // ON CREATE
     //==============================================================================================
     @Override
@@ -124,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         }
 
-
         // getting notes from sharedPreferences ----------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -139,6 +165,16 @@ public class MainActivity extends AppCompatActivity {
             allNotes = notesJson;
         }
 
+        // getting folders from sharedPreferences --------------------------------------------------
+        SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+        String jsonFoldersFromPref = foldersPreferences.getString("Folders", null);
+        Set<String> gsonFolders = gson.fromJson(jsonFoldersFromPref, Set.class);
+
+        for (String folder : gsonFolders) {
+            if (!folders.contains(folder)) {
+                folders.add(folder);
+            }
+        }
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
@@ -224,6 +260,109 @@ public class MainActivity extends AppCompatActivity {
                 settingsPreferences.edit().putInt("Mode", AppCompatDelegate.MODE_NIGHT_YES).apply();
             }
         });
+
+        // chips for choosing folder to show -------------------------------------------------------
+        Chip notesChip;
+        notesChip = findViewById(R.id.notes_chip);
+        notesChip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notesToShow.clear();
+                for (Note note : allNotes) {
+                    if (note.getFolders().contains("Notes") && !note.getFolders().contains("Recycle Bin")) {
+                        notesToShow.add(note);
+                    }
+                }
+                listView.setAdapter(noteAdapter);
+            }
+        });
+
+        Chip recycleBinChip;
+        recycleBinChip = findViewById(R.id.recycle_bin_chip);
+        recycleBinChip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notesToShow.clear();
+                for (Note note : allNotes) {
+                    if (note.getFolders().contains("Recycle Bin")) {
+                        notesToShow.add(note);
+                    }
+                }
+                listView.setAdapter(noteAdapter);
+            }
+        });
+
+
+        for (String folder : folders) {
+
+            if (folder == "All Notes") {
+                ChipGroup foldersChips = findViewById(R.id.chip_group);
+                Chip newChip = new Chip(foldersChips.getContext());
+                newChip.setText(folder);
+                foldersChips.addView(newChip);
+
+                newChip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        notesToShow.clear();
+                        for (Note note : allNotes) {
+                            if (note.getFolders().contains(folder)) {
+                                notesToShow.add(note);
+                            }
+                        }
+                        listView.setAdapter(noteAdapter);
+                    }
+                });
+
+            } else if (folder != "Notes" && folder != "Recycle Bin") {
+                ChipGroup foldersChips = findViewById(R.id.chip_group);
+                Chip newChip = new Chip(foldersChips.getContext());
+                newChip.setText(folder);
+                foldersChips.addView(newChip);
+
+                newChip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        notesToShow.clear();
+                        for (Note note : allNotes) {
+                            if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
+                                notesToShow.add(note);
+                            }
+                        }
+                        listView.setAdapter(noteAdapter);
+                    }
+                });
+            }
+        }
+
+        // button to add the folder ----------------------------------------------------------------
+        Button addFolderButton;
+        addFolderButton = findViewById(R.id.add_folder_button);
+        addFolderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = findViewById(R.id.add_folder_input);
+                String newFolder = editText.getText().toString();
+
+                if (!folders.contains(newFolder)) {
+                    folders.add(1, newFolder);
+                }
+                SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                Gson gson = new Gson();
+                String json = gson.toJson(folders);
+                foldersPreferences.edit().putString("Folders", json).apply();
+
+                ChipGroup foldersChips = findViewById(R.id.chip_group);
+                Chip newChip = new Chip(foldersChips.getContext());
+                newChip.setText(newFolder);
+                foldersChips.addView(newChip);
+
+            }
+        });
+
+
+
+
 
 
     }
