@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static CardView foldersCard;
 
     String folder = "Notes";
-    ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
+    public  static ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
 
     //==============================================================================================
     @Override
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if( newFolder != "") {
                     if (!folders.contains(newFolder)) {
-                        folders.add(1, newFolder);
+                        folders.add(newFolder);
                     }
                     SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
                     Gson gson = new Gson();

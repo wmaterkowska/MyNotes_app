@@ -11,4 +11,11 @@
         android:icon="@drawable/ic_color_palette">
     </item>
 
+    <item
+        android:id="@+id/save_to_folder"
+        android:title="Save to Folder"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_label_24">
+    </item>
+
 </menu>

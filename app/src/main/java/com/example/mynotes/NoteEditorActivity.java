@@ -23,8 +23,13 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.mynotes.model.Note;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -32,6 +37,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     static Note note;
 
     CardView colorPalette;
+    CardView saveToFolder;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -41,11 +47,13 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
+
     // options menu on the title bar ---------------------------------------------------------------
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         colorPalette = findViewById(id.colorPaletteCard);
+        saveToFolder = findViewById(id.save_to_folder);
         
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -57,6 +65,14 @@ public class NoteEditorActivity extends AppCompatActivity {
                 } else {
                     colorPalette.setVisibility(View.INVISIBLE);
                 }
+                return true;
+            case id.save_to_folder:
+                if (saveToFolder.getVisibility() == View.INVISIBLE){
+                    saveToFolder.setVisibility(View.VISIBLE);
+                } else {
+                    saveToFolder.setVisibility(View.INVISIBLE);
+                }
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -65,16 +81,25 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
         colorPalette = findViewById(id.colorPaletteCard);
+        saveToFolder = findViewById(id.save_to_folder);
 
         colorPalette.getGlobalVisibleRect(viewRect);
         if (colorPalette.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
             colorPalette.setVisibility(View.INVISIBLE);
             return true;
         }
+
+        saveToFolder.getGlobalVisibleRect(viewRect);
+        if (saveToFolder.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+            saveToFolder.setVisibility(View.INVISIBLE);
+            return true;
+        }
+
         return super.dispatchTouchEvent(ev);
     }
 
 
+    //==============================================================================================
     // ON CREATE
     //==============================================================================================
     @Override
@@ -134,10 +159,27 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
 
+        for (String folder : MainActivity.folders ) {
+            ChipGroup foldersChips = findViewById(R.id.chip_group2);
+            Chip newChip = new Chip(foldersChips.getContext());
+            newChip.setText(folder);
+            foldersChips.addView(newChip);
+
+            newChip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    note.addFolder(folder);
+                }
+            });
+        }
+
+
+
+
 
         // fab for changing color to PINK ----------------------------------------------------------
-        FloatingActionButton fabGreen = findViewById(id.pink);
-        fabGreen.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabPink = findViewById(id.pink);
+        fabPink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
@@ -183,8 +225,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         // fab for changing color to GREEN ---------------------------------------------------------
-        FloatingActionButton fabPink = findViewById(id.green);
-        fabPink.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabGreen = findViewById(id.green);
+        fabGreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (MainActivity.listView != null) {
