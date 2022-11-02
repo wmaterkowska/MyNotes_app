@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static CardView foldersCard;
 
     String folder = "Notes";
-    ArrayList<String> folders = new ArrayList<>(Arrays.asList("All Notes", "Notes", "Recycle Bin"));
+    ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
 
     //==============================================================================================
     @Override
@@ -170,9 +170,11 @@ public class MainActivity extends AppCompatActivity {
         String jsonFoldersFromPref = foldersPreferences.getString("Folders", null);
         Set<String> gsonFolders = gson.fromJson(jsonFoldersFromPref, Set.class);
 
-        for (String folder : gsonFolders) {
-            if (!folders.contains(folder)) {
-                folders.add(folder);
+        if (gsonFolders != null) {
+            for (String folder : gsonFolders) {
+                if (!folders.contains(folder)) {
+                    folders.add(folder);
+                }
             }
         }
 
@@ -261,46 +263,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // button to add the folder ----------------------------------------------------------------
+        FloatingActionButton addFolderButton;
+        addFolderButton = findViewById(R.id.add_folder_button);
+        addFolderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = findViewById(R.id.add_folder_input);
+                String newFolder = editText.getText().toString();
+
+                if( newFolder != "") {
+                    if (!folders.contains(newFolder)) {
+                        folders.add(1, newFolder);
+                    }
+                    SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(folders);
+                    foldersPreferences.edit().putString("Folders", json).apply();
+
+                    ChipGroup foldersChips = findViewById(R.id.chip_group);
+                    Chip newChip = new Chip(foldersChips.getContext());
+                    newChip.setText(newFolder);
+                    foldersChips.addView(newChip);
+                }
+
+                editText.getText().clear();
+            }
+        });
+
+
         // chips for choosing folder to show -------------------------------------------------------
-        Chip notesChip;
-        notesChip = findViewById(R.id.notes_chip);
-        notesChip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                notesToShow.clear();
-                for (Note note : allNotes) {
-                    if (note.getFolders().contains("Notes") && !note.getFolders().contains("Recycle Bin")) {
-                        notesToShow.add(note);
-                    }
-                }
-                listView.setAdapter(noteAdapter);
-            }
-        });
-
-        Chip recycleBinChip;
-        recycleBinChip = findViewById(R.id.recycle_bin_chip);
-        recycleBinChip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                notesToShow.clear();
-                for (Note note : allNotes) {
-                    if (note.getFolders().contains("Recycle Bin")) {
-                        notesToShow.add(note);
-                    }
-                }
-                listView.setAdapter(noteAdapter);
-            }
-        });
-
-
         for (String folder : folders) {
+            ChipGroup foldersChips = findViewById(R.id.chip_group);
+            Chip newChip = new Chip(foldersChips.getContext());
+            newChip.setText(folder);
+            foldersChips.addView(newChip);
 
-            if (folder == "All Notes") {
-                ChipGroup foldersChips = findViewById(R.id.chip_group);
-                Chip newChip = new Chip(foldersChips.getContext());
-                newChip.setText(folder);
-                foldersChips.addView(newChip);
-
+            if (folder == "Recycle Bin" || folder == "All Notes") {
                 newChip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -313,13 +312,7 @@ public class MainActivity extends AppCompatActivity {
                         listView.setAdapter(noteAdapter);
                     }
                 });
-
-            } else if (folder != "Notes" && folder != "Recycle Bin") {
-                ChipGroup foldersChips = findViewById(R.id.chip_group);
-                Chip newChip = new Chip(foldersChips.getContext());
-                newChip.setText(folder);
-                foldersChips.addView(newChip);
-
+            } else {
                 newChip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -333,35 +326,33 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        }
 
-        // button to add the folder ----------------------------------------------------------------
-        Button addFolderButton;
-        addFolderButton = findViewById(R.id.add_folder_button);
-        addFolderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText editText = findViewById(R.id.add_folder_input);
-                String newFolder = editText.getText().toString();
+            newChip.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(" ")
+                            .setIcon(R.drawable.ic_baseline_delete_24)
+                            .setTitle("Do you want to delete this folder?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    foldersChips.removeView(newChip);
+                                    folders.remove(folder);
 
-                if (!folders.contains(newFolder)) {
-                    folders.add(1, newFolder);
+                                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(folders);
+                                    sharedPreferences.edit().putString("Folders", json).apply();
+
+                                    listView.setAdapter(noteAdapter);
+                                }
+                            }).setNegativeButton("No", null).show();
+                    return true;
                 }
-                SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                Gson gson = new Gson();
-                String json = gson.toJson(folders);
-                foldersPreferences.edit().putString("Folders", json).apply();
+            });
 
-                ChipGroup foldersChips = findViewById(R.id.chip_group);
-                Chip newChip = new Chip(foldersChips.getContext());
-                newChip.setText(newFolder);
-                foldersChips.addView(newChip);
-
-            }
-        });
-
-
-
+        }
 
 
 
