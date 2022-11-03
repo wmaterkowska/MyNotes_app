@@ -24,12 +24,15 @@ import android.widget.EditText;
 
 import com.example.mynotes.model.Note;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -112,7 +115,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        EditText editText = findViewById(id.editText);
+        EditText editText = findViewById(id.edit_text);
         Intent intent = getIntent();
 
         notePosition = intent.getIntExtra("noteId", -1);
@@ -128,8 +131,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             MainActivity.noteAdapter.notifyDataSetChanged();
         }
 
-        // managing EditText and changes in note ---------------------------------------------------
 
+        // managing EditText and changes in note ---------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = gson.toJson(MainActivity.allNotes);
@@ -146,7 +149,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                 MainActivity.noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
-
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.allNotes);
@@ -159,9 +161,35 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
 
+        // creating chips of the folders of the note -----------------------------------------------
+        Set<String> foldersForChips = new HashSet<>(note.getFolders());
+        foldersForChips.remove("Notes");
+        foldersForChips.remove("All Notes");
+
+        for (String folder : foldersForChips ) {
+            ChipGroup foldersChips = findViewById(id.chip_group_folder_of_the_note);
+            foldersChips.setChipSpacingHorizontal(8);
+            foldersChips.setPadding(0,0,0,0);
+            foldersChips.setClickable(false);
+            foldersChips.setFocusable(false);
+
+            Chip newChip = new Chip(foldersChips.getContext());
+            newChip.setText(folder);
+            ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(this, null,0, R.style.Widget_App_Chip);
+            newChip.setChipDrawable(chipFolderDrawable);
+
+            foldersChips.addView(newChip);
+        }
+
+
         // creating folders chips on CardView and handle saving note to folder ---------------------
-        for (String folder : MainActivity.folders ) {
-            ChipGroup foldersChips = findViewById(R.id.chip_group2);
+        Set<String> foldersForSavingChips = new HashSet<>(MainActivity.folders);
+        foldersForSavingChips.remove("Notes");
+        foldersForSavingChips.remove("All Notes");
+        foldersForSavingChips.remove("Recycle Bin");
+
+        for (String folder : foldersForSavingChips) {
+            ChipGroup foldersChips = findViewById(R.id.chip_group_folders_to_save);
             Chip newChip = new Chip(foldersChips.getContext());
             newChip.setText(folder);
             foldersChips.addView(newChip);
@@ -169,13 +197,19 @@ public class NoteEditorActivity extends AppCompatActivity {
             newChip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    note.addFolder(folder);
 
+                    if (note.getFolders().contains(folder)) {
+                        note.getFolders().remove(folder);
+                    } else {
+                        note.addFolder(folder);
+                    }
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
+
+                    recreate();
                 }
             });
         }
@@ -211,7 +245,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                 }
             });
         }
-
 
         // fab for changing color to WHITE ---------------------------------------------------------
         FloatingActionButton fabWhite = findViewById(id.white);

@@ -8,14 +8,15 @@
 
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/edit_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="top|left"
         android:inputType="textMultiLine"
         android:padding="5dp"
         android:paddingStart="10dp"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,6 +24,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <!-- ChipGroup of folders of the note ****************************************************** -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_folder_of_the_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Widget_App_Chip">
+    </com.google.android.material.chip.ChipGroup>
 
     <!-- CardView to choose background color for note ****************************************** -->
     <androidx.cardview.widget.CardView
@@ -125,12 +136,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save to the folder"
-                app:layout_constraintBottom_toTopOf="@id/chip_group2"
+                app:layout_constraintBottom_toTopOf="@id/chip_group_folders_to_save"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group2"
+                android:id="@+id/chip_group_folders_to_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"

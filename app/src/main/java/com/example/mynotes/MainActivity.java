@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -189,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
         noteAdapter = new NoteAdapter(notesToShow, this);
         listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
