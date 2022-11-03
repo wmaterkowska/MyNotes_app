@@ -340,6 +340,12 @@ public class MainActivity extends AppCompatActivity {
                                     foldersChips.removeView(newChip);
                                     folders.remove(folder);
 
+                                    for (Note note : allNotes) {
+                                        if (note.getFolders().contains(folder)) {
+                                            note.getFolders().remove(folder);
+                                        }
+                                    }
+
                                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
                                     Gson gson = new Gson();
                                     String json = gson.toJson(folders);

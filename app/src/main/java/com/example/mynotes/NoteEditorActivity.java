@@ -128,8 +128,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             MainActivity.noteAdapter.notifyDataSetChanged();
         }
 
+        // managing EditText and changes in note ---------------------------------------------------
 
-        MainActivity.allNotes.retainAll(MainActivity.notesToShow);
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = gson.toJson(MainActivity.allNotes);
@@ -146,7 +146,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 MainActivity.noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
-                MainActivity.allNotes.retainAll(MainActivity.notesToShow);
+
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.allNotes);
@@ -159,6 +159,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
 
+        // creating folders chips on CardView and handle saving note to folder ---------------------
         for (String folder : MainActivity.folders ) {
             ChipGroup foldersChips = findViewById(R.id.chip_group2);
             Chip newChip = new Chip(foldersChips.getContext());
@@ -169,106 +170,48 @@ public class NoteEditorActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     note.addFolder(folder);
+
+
+                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.allNotes);
+                    sharedPreferences.edit().putString("Notes", json).apply();
                 }
             });
         }
 
 
+        // fabs for changing color -----------------------------------------------------------------
+        Map<Integer, String> colors = new HashMap<>();
+        colors.put(id.pink, "#E8B2B5");
+        colors.put(id.blue, "#2E4F6C");
+        colors.put(id.green, "#7E9C65");
+        colors.put(id.yellow, "#D1C357");
+
+        for (Integer key : colors.keySet()) {
+            FloatingActionButton fabColor = findViewById(key);
+            fabColor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (MainActivity.listView != null) {
+                        editText.setBackgroundColor(Color.parseColor(colors.get(key)));
+                        note.setBackgroundColor(colors.get(key));
+
+                        CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                        card.setCardBackgroundColor(Color.parseColor(colors.get(key)));
+
+                        MainActivity.notesToShow.set(notePosition, note);
 
 
-
-        // fab for changing color to PINK ----------------------------------------------------------
-        FloatingActionButton fabPink = findViewById(id.pink);
-        fabPink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.listView != null) {
-                    editText.setBackgroundColor(Color.parseColor("#E8B2B5"));
-                    note.setBackgroundColor("#E8B2B5");
-
-                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
-                    card.setCardBackgroundColor(Color.parseColor( "#E8B2B5"));
-
-                    MainActivity.notesToShow.set(notePosition, note);
-
-                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
-                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                    Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.allNotes);
-                    sharedPreferences.edit().putString("Notes", json).apply();
+                        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                        Gson gson = new Gson();
+                        String json = gson.toJson(MainActivity.allNotes);
+                        sharedPreferences.edit().putString("Notes", json).apply();
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        // fab for changing color to BLUE ----------------------------------------------------------
-        FloatingActionButton fabBlue = findViewById(id.blue);
-        fabBlue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.listView != null) {
-                    editText.setBackgroundColor(Color.parseColor("#2E4F6C"));
-                    note.setBackgroundColor("#2E4F6C");
-
-                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
-                    card.setCardBackgroundColor(Color.parseColor( "#2E4F6C"));
-
-                    MainActivity.notesToShow.set(notePosition, note);
-
-                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
-                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                    Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.allNotes);
-                    sharedPreferences.edit().putString("Notes", json).apply();
-
-                }
-            }
-        });
-
-        // fab for changing color to GREEN ---------------------------------------------------------
-        FloatingActionButton fabGreen = findViewById(id.green);
-        fabGreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.listView != null) {
-                    editText.setBackgroundColor(Color.parseColor("#7E9C65"));
-                    note.setBackgroundColor("#7E9C65");
-
-                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
-                    card.setCardBackgroundColor(Color.parseColor( "#7E9C65"));
-
-                    MainActivity.notesToShow.set(notePosition, note);
-
-                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
-                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                    Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.allNotes);
-                    sharedPreferences.edit().putString("Notes", json).apply();
-                }
-            }
-        });
-
-        // fab for changing color to YELLOW --------------------------------------------------------
-        FloatingActionButton fabYellow = findViewById(id.yellow);
-        fabYellow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.listView != null) {
-                    editText.setBackgroundColor(Color.parseColor("#D1C357"));
-                    note.setBackgroundColor("#D1C357");
-
-                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
-                    card.setCardBackgroundColor(Color.parseColor( "#D1C357"));
-
-                    MainActivity.notesToShow.set(notePosition, note);
-
-                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
-                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                    Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.allNotes);
-                    sharedPreferences.edit().putString("Notes", json).apply();
-                }
-            }
-        });
 
         // fab for changing color to WHITE ---------------------------------------------------------
         FloatingActionButton fabWhite = findViewById(id.white);
@@ -289,7 +232,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                     MainActivity.notesToShow.set(notePosition, note);
 
-                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
+
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
@@ -317,7 +260,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                     MainActivity.notesToShow.set(notePosition, note);
 
-                    MainActivity.allNotes.retainAll(MainActivity.notesToShow);
+
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
