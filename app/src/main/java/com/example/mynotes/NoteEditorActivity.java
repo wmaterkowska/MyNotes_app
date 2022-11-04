@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +42,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     CardView colorPalette;
     CardView saveToFolder;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,14 +122,14 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         notePosition = intent.getIntExtra("noteId", -1);
         if (notePosition != -1) {
-            note = MainActivity.notesToShow.get(notePosition);
+            note = MainActivity.allNotes.get(notePosition);
             editText.setText(note.getContent());
-            notePosition = MainActivity.notesToShow.indexOf(note);
+            notePosition = MainActivity.allNotes.indexOf(note);
         } else {
             note = new Note("");
             MainActivity.notesToShow.add(0, note);
             MainActivity.allNotes.add(0,note);
-            notePosition = MainActivity.notesToShow.indexOf(note);
+            notePosition = MainActivity.allNotes.indexOf(note);
             MainActivity.noteAdapter.notifyDataSetChanged();
         }
 
@@ -145,7 +147,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.notesToShow.get(notePosition).setContent(String.valueOf(charSequence));
+                MainActivity.allNotes.get(notePosition).setContent(String.valueOf(charSequence));
                 MainActivity.noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
@@ -172,6 +174,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             foldersChips.setPadding(0,0,0,0);
             foldersChips.setClickable(false);
             foldersChips.setFocusable(false);
+            foldersChips.setBackgroundColor(Color.TRANSPARENT);
 
             Chip newChip = new Chip(foldersChips.getContext());
             newChip.setText(folder);
@@ -236,6 +239,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                         MainActivity.notesToShow.set(notePosition, note);
 
+                        ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
+                        layout_edit.setBackgroundColor(Color.parseColor(colors.get(key)));
 
                         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                         Gson gson = new Gson();
@@ -305,6 +310,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         // changing the background color
         if(note.getBackgroundColor() != null) {
             editText.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
+            ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
+            layout_edit.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
         }
     }
 

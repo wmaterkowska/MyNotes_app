@@ -249,6 +249,9 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
                 settingsPreferences.edit().putInt("Mode", AppCompatDelegate.MODE_NIGHT_NO).apply();
+
+                listView.refreshDrawableState();
+                listView.setAdapter(noteAdapter);
             }
         });
 
@@ -261,7 +264,10 @@ public class MainActivity extends AppCompatActivity {
                 themeChange.setVisibility(View.VISIBLE);
 
                 SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
-                settingsPreferences.edit().putInt("Mode", AppCompatDelegate.MODE_NIGHT_YES).apply();
+                settingsPreferences.edit().putInt("Mode", AppCompatDelegate.MODE_NIGHT_YES).apply();;
+
+                listView.refreshDrawableState();
+                listView.setAdapter(noteAdapter);
             }
         });
 
