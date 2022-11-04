@@ -6,7 +6,7 @@
 
     <style name="Widget_App_Chip"
         parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">@null</item>
+        <item name="chipBackgroundColor">#4DFFFFFF</item>
         <item name="android:backgroundTint">@null</item>
         <item name="chipSurfaceColor">@android:color/transparent</item>
         <item name="chipStrokeWidth">1dp</item>

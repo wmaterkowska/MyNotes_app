@@ -43,6 +43,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     CardView colorPalette;
     CardView saveToFolder;
 
+    MainActivity mainActivity;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -49,13 +49,18 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Note> notesToShow = new ArrayList<>();
 
     static NoteAdapter noteAdapter;
-    public static ListView listView;
+    public  static ListView listView;
 
     private static CardView themeChange;
     private static CardView foldersCard;
 
     String folder = "Notes";
     public  static ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
+
+
+    public ListView getListView() {
+        return listView;
+    }
 
     //==============================================================================================
     @Override
