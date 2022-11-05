@@ -20,18 +20,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- bottom menu with fab ****************************************************************** -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_fab_new_note2"
-        app:fabSize="normal"
-        app:maxImageSize="34dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="?attr/actionBarSize" />
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:backgroundTint="?attr/colorPrimary"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp"
+            app:fabAlignmentMode="end"
+            android:visibility="visible">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:backgroundTint="@android:color/transparent"
+                app:elevation="0dp"
+                android:layout_marginEnd="100dp"
+                app:itemIconTint="@android:color/white"
+                app:itemRippleColor="@android:color/white"
+                app:itemTextColor="@android:color/white"
+                app:menu="@menu/bottom_notes_menu" />
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_fab"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_fab_new_note2"
+            app:fabSize="normal"
+            app:maxImageSize="34dp"
+            app:layout_anchorGravity="right"
+            app:layout_anchor="@id/bottomBar"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
     <!-- CardView for changing theme dark/light ************************************************ -->

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/trash"
+        android:title="Delete"
+        android:icon="@drawable/ic_baseline_delete_24">
+    </item>
+
+    <item
+        android:id="@+id/copy"
+        android:title="Copy"
+        android:icon="@drawable/ic_baseline_content_copy_24">
+    </item>
+
+
+
+    <item
+        android:id="@+id/labels"
+        android:title="Labels"
+        android:icon="@drawable/ic_baseline_label_24">
+    </item>
+</menu>
