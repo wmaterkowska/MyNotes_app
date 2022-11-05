@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // bottom menu
+        // bottom menu -----------------------------------------------------------------------------
         BottomNavigationView bottomMenu = (BottomNavigationView) findViewById(R.id.bottomNavigation);
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                 Note noteToEdit = (Note) listView.getItemAtPosition(listView.getCheckedItemPosition());
 
                 switch (item.getItemId()) {
-                    case R.id.trash:
+                    case R.id.trash: // delete the note --------------------------------------------
                         if (noteToEdit.getFolders().contains("Recycle Bin")) {
                             new AlertDialog.Builder(MainActivity.this)
                                     .setTitle(" ")
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                             return true;
                         }
 
-                    case R.id.copy:
+                    case R.id.copy: // copy the note -----------------------------------------------
                         return true;
                 }
 
@@ -328,34 +328,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // button to add the folder ----------------------------------------------------------------
-        FloatingActionButton addFolderButton;
-        addFolderButton = findViewById(R.id.add_folder_button);
-        addFolderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText editText = findViewById(R.id.add_folder_input);
-                String newFolder = editText.getText().toString();
-
-                if( newFolder != "") {
-                    if (!folders.contains(newFolder)) {
-                        folders.add(newFolder);
-                    }
-                    SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                    Gson gson = new Gson();
-                    String json = gson.toJson(folders);
-                    foldersPreferences.edit().putString("Folders", json).apply();
-
-                    ChipGroup foldersChips = findViewById(R.id.chip_group);
-                    Chip newChip = new Chip(foldersChips.getContext());
-                    newChip.setText(newFolder);
-                    foldersChips.addView(newChip);
-                }
-
-                editText.getText().clear();
-            }
-        });
-
 
         // chips for choosing folder to show -------------------------------------------------------
         for (String folder : folders) {
@@ -391,37 +363,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-
-            newChip.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle(" ")
-                            .setIcon(R.drawable.ic_baseline_delete_24)
-                            .setTitle("Do you want to delete this folder?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    foldersChips.removeView(newChip);
-                                    folders.remove(folder);
-
-                                    for (Note note : allNotes) {
-                                        if (note.getFolders().contains(folder)) {
-                                            note.getFolders().remove(folder);
-                                        }
-                                    }
-
-                                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(folders);
-                                    sharedPreferences.edit().putString("Folders", json).apply();
-
-                                    listView.setAdapter(noteAdapter);
-                                }
-                            }).setNegativeButton("No", null).show();
-                    return true;
-                }
-            });
 
         }
 

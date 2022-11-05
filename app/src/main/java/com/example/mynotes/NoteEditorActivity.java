@@ -3,12 +3,14 @@ package com.example.mynotes;
 import static com.example.mynotes.R.*;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -43,7 +45,9 @@ public class NoteEditorActivity extends AppCompatActivity {
     CardView colorPalette;
     CardView saveToFolder;
 
-    MainActivity mainActivity;
+    Set<String> labelsOfNote;
+    Set<String> labelsForChipsToSave;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,6 +122,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+
+        // Edit text -------------------------------------------------------------------------------
         EditText editText = findViewById(id.edit_text);
         Intent intent = getIntent();
 
@@ -164,12 +170,12 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
 
-        // creating chips of the folders of the note -----------------------------------------------
-        Set<String> foldersForChips = new HashSet<>(note.getFolders());
-        foldersForChips.remove("Notes");
-        foldersForChips.remove("All Notes");
+        // creating chips of the labels of the note -----------------------------------------------
+        labelsOfNote = new HashSet<>(note.getFolders());
+        labelsOfNote.remove("Notes");
+        labelsOfNote.remove("All Notes");
 
-        for (String folder : foldersForChips ) {
+        for (String label : labelsOfNote) {
             ChipGroup foldersChips = findViewById(id.chip_group_folder_of_the_note);
             foldersChips.setChipSpacingHorizontal(8);
             foldersChips.setPadding(0,0,0,0);
@@ -177,26 +183,28 @@ public class NoteEditorActivity extends AppCompatActivity {
             foldersChips.setFocusable(false);
             foldersChips.setBackgroundColor(Color.TRANSPARENT);
 
-            Chip newChip = new Chip(foldersChips.getContext());
-            newChip.setText(folder);
+            Chip labelOfNote = new Chip(foldersChips.getContext());
+            labelOfNote.setText(label);
             ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(this, null,0, R.style.Widget_App_Chip);
-            newChip.setChipDrawable(chipFolderDrawable);
+            labelOfNote.setChipDrawable(chipFolderDrawable);
 
-            foldersChips.addView(newChip);
+            foldersChips.addView(labelOfNote);
+
         }
 
 
-        // creating folders chips on CardView and handle saving note to folder ---------------------
-        Set<String> foldersForSavingChips = new HashSet<>(MainActivity.folders);
-        foldersForSavingChips.remove("Notes");
-        foldersForSavingChips.remove("All Notes");
-        foldersForSavingChips.remove("Recycle Bin");
+        // creating label chips on CardView and handle saving note with label ----------------------
+        labelsForChipsToSave = new HashSet<>(MainActivity.folders);
+        labelsForChipsToSave.remove("Notes");
+        labelsForChipsToSave.remove("All Notes");
+        labelsForChipsToSave.remove("Recycle Bin");
 
-        for (String folder : foldersForSavingChips) {
-            ChipGroup foldersChips = findViewById(R.id.chip_group_folders_to_save);
-            Chip newChip = new Chip(foldersChips.getContext());
+        ChipGroup labelsChips = findViewById(R.id.chip_group_labels_to_save);
+
+        for (String folder : labelsForChipsToSave) {
+            Chip newChip = new Chip(labelsChips.getContext());
             newChip.setText(folder);
-            foldersChips.addView(newChip);
+            labelsChips.addView(newChip);
 
             newChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -216,7 +224,111 @@ public class NoteEditorActivity extends AppCompatActivity {
                     recreate();
                 }
             });
+
+            newChip.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    new AlertDialog.Builder(NoteEditorActivity.this)
+                            .setTitle(" ")
+                            .setIcon(R.drawable.ic_baseline_delete_24)
+                            .setTitle("Do you want to delete this label?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    labelsChips.removeView(newChip);
+                                    MainActivity.folders.remove(folder);
+
+                                    for (Note note : MainActivity.allNotes) {
+                                        if (note.getFolders().contains(folder)) {
+                                            note.getFolders().remove(folder);
+                                        }
+                                    }
+
+                                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(MainActivity.folders);
+                                    sharedPreferences.edit().putString("Folders", json).apply();
+                                }
+                            }).setNegativeButton("No", null).show();
+                    return true;
+                }
+            });
+
         }
+
+        // button to add the folder ----------------------------------------------------------------
+        FloatingActionButton addLabelButton;
+        addLabelButton = findViewById(R.id.add_label_button);
+        addLabelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = findViewById(R.id.add_label_input);
+                String newLabel = editText.getText().toString();
+
+                if( newLabel != "") {
+                    if (!MainActivity.folders.contains(newLabel)) {
+                        MainActivity.folders.add(newLabel);
+                    }
+                    SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(MainActivity.folders);
+                    foldersPreferences.edit().putString("Folders", json).apply();
+
+                    Chip newChip = new Chip(labelsChips.getContext());
+                    newChip.setText(newLabel);
+                    labelsChips.addView(newChip);
+
+                    newChip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            note.addFolder(newLabel);
+
+                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                            Gson gson = new Gson();
+                            String json = gson.toJson(MainActivity.allNotes);
+                            sharedPreferences.edit().putString("Notes", json).apply();
+
+                            recreate();
+                        }
+                    });
+
+                    newChip.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            new AlertDialog.Builder(NoteEditorActivity.this)
+                                    .setTitle(" ")
+                                    .setIcon(R.drawable.ic_baseline_delete_24)
+                                    .setTitle("Do you want to delete this label?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            labelsChips.removeView(newChip);
+                                            MainActivity.folders.remove(newLabel);
+
+                                            for (Note note : MainActivity.allNotes) {
+                                                if (note.getFolders().contains(newLabel)) {
+                                                    note.getFolders().remove(newLabel);
+                                                }
+                                            }
+
+                                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                                            Gson gson = new Gson();
+                                            String json = gson.toJson(MainActivity.folders);
+                                            sharedPreferences.edit().putString("Folders", json).apply();
+                                        }
+                                    }).setNegativeButton("No", null).show();
+                            return true;
+                        }
+                    });
+                }
+
+                editText.getText().clear();
+            }
+
+        });
+
+
 
 
         // fabs for changing color -----------------------------------------------------------------
