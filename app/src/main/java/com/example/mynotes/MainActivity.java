@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,10 +26,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.ShareActionProvider;
+import android.widget.Toast;
 
 
 import com.example.mynotes.adapters.NoteAdapter;
 import com.example.mynotes.model.Note;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -62,12 +68,16 @@ public class MainActivity extends AppCompatActivity {
         return listView;
     }
 
-    //==============================================================================================
+
+    // MENUS =======================================================================================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.notes_menu, menu);
+        MenuInflater menuTopInflater = getMenuInflater();
+        menuTopInflater.inflate(R.menu.notes_menu, menu);
+
+        //inflateBottomAppBar(menu);
+
 
         MenuItem searchViewItem = menu.findItem(R.id.search);
 
@@ -86,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -145,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Collections.reverse(allNotes);
+
 
         // getting users choice of light/dark mode from SharedPreferences --------------------------
         SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
@@ -209,28 +222,67 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final int itemToDelete = i;
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(" ")
-                        .setIcon(R.drawable.ic_baseline_delete_24)
-                        .setTitle("Do you want to delete this note?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                allNotes.get(itemToDelete).addFolder("Recycle Bin");
-                                notesToShow.remove(itemToDelete);
+                listView.setItemChecked(i, true);
+                BottomAppBar bottomAppBar = (BottomAppBar) findViewById(R.id.bottomBar);
+                bottomAppBar.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
 
-                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                                Gson gson = new Gson();
-                                String json = gson.toJson(allNotes);
-                                sharedPreferences.edit().putString("Notes", json).apply();
 
-                                listView.setAdapter(noteAdapter);
-                            }
-                        }).setNegativeButton("No", null).show();
+
+        // bottom menu
+        BottomNavigationView bottomMenu = (BottomNavigationView) findViewById(R.id.bottomNavigation);
+        bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Note noteToEdit = (Note) listView.getItemAtPosition(listView.getCheckedItemPosition());
+
+                switch (item.getItemId()) {
+                    case R.id.trash:
+                        if (noteToEdit.getFolders().contains("Recycle Bin")) {
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle(" ")
+                                    .setIcon(R.drawable.ic_baseline_delete_24)
+                                    .setTitle("Do you want to delete this note forever?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            allNotes.remove(noteToEdit);
+                                            notesToShow.remove(noteToEdit);
+
+                                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                                            Gson gson = new Gson();
+                                            String json = gson.toJson(allNotes);
+                                            sharedPreferences.edit().putString("Notes", json).apply();
+
+                                            listView.setAdapter(noteAdapter);
+                                        }
+                                    }).setNegativeButton("No", null).show();
+                            return true;
+                        } else {
+                            noteToEdit.addFolder("Recycle Bin");
+                            notesToShow.remove(noteToEdit);
+
+                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+                            Gson gson = new Gson();
+                            String json = gson.toJson(allNotes);
+                            sharedPreferences.edit().putString("Notes", json).apply();
+
+                            listView.setAdapter(noteAdapter);
+                            return true;
+                        }
+
+                    case R.id.copy:
+                        return true;
+                }
+
+
                 return true;
             }
         });

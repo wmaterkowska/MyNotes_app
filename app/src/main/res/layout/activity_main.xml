@@ -39,7 +39,7 @@
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp"
             app:fabAlignmentMode="end"
-            android:visibility="visible">
+            android:visibility="invisible">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottomNavigation"
