@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuItemCompat;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
 import com.example.mynotes.adapters.NoteAdapter;
@@ -263,6 +266,16 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.copy: // copy the note -----------------------------------------------
+                        String copyTitle = noteToEdit.getTitle();
+                        String copyContent = noteToEdit.getContent();
+                        String copyNote = copyTitle + "\n" + copyContent;
+
+                        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("Copied", copyNote);
+                        clipboardManager.setPrimaryClip(clip);
+
+                        Toast.makeText(getApplicationContext(),"Copied",Toast.LENGTH_SHORT).show();
+                        bottomAppBar.setVisibility(View.INVISIBLE);
                         return true;
                     case R.id.labels: // set label of the note -------------------------------------
                         return true;
