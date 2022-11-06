@@ -63,7 +63,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         colorPalette = findViewById(id.colorPaletteCard);
-        saveToFolder = findViewById(id.save_to_folder);
+        saveToFolder = findViewById(id.save_to_label);
         
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -76,7 +76,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     colorPalette.setVisibility(View.INVISIBLE);
                 }
                 return true;
-            case id.save_to_folder:
+            case id.save_to_label:
                 if (saveToFolder.getVisibility() == View.INVISIBLE){
                     saveToFolder.setVisibility(View.VISIBLE);
                 } else {
@@ -92,7 +92,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
         colorPalette = findViewById(id.colorPaletteCard);
-        saveToFolder = findViewById(id.save_to_folder);
+        saveToFolder = findViewById(id.save_to_label);
 
         colorPalette.getGlobalVisibleRect(viewRect);
         if (colorPalette.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
@@ -178,7 +178,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         for (String label : labelsOfNote) {
             ChipGroup foldersChips = findViewById(id.chip_group_folder_of_the_note);
-            foldersChips.setChipSpacingHorizontal(8);
+            foldersChips.setChipSpacingHorizontal(2);
             foldersChips.setPadding(0,0,0,0);
             foldersChips.setClickable(false);
             foldersChips.setFocusable(false);
@@ -200,7 +200,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         labelsForChipsToSave = new HashSet<>(MainActivity.folders);
         labelsForChipsToSave.remove("Notes");
         labelsForChipsToSave.remove("All Notes");
-        labelsForChipsToSave.remove("Recycle Bin");
 
         ChipGroup labelsChips = findViewById(R.id.chip_group_labels_to_save);
 

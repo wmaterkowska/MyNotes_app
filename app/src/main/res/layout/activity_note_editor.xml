@@ -116,9 +116,9 @@
     </androidx.cardview.widget.CardView>
 
 
-    <!-- CardView to save note to the folder *************************************************** -->
+    <!-- CardView to save note to the label *************************************************** -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/save_to_folder"
+        android:id="@+id/save_to_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -181,7 +181,6 @@
                 app:layout_constraintStart_toEndOf="@id/add_label_input"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:contentDescription="ADD" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
