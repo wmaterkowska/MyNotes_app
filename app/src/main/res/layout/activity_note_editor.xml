@@ -9,11 +9,12 @@
     tools:context=".NoteEditorActivity">
 
 
-    <!-- Edit Text main alement **************************************************************** -->
+    <!-- Edit Text main element **************************************************************** -->
     <EditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
         android:ems="10"
         android:gravity="top|left"
         android:inputType="textMultiLine"
@@ -27,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <!-- ChipGroup of folders of the note ****************************************************** -->
+    <!-- ChipGroup of labels of the note ******************************************************* -->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_group_folder_of_the_note"
         android:layout_width="wrap_content"

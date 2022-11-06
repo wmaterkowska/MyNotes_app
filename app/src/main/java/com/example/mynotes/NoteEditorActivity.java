@@ -58,7 +58,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    // options menu on the title bar ---------------------------------------------------------------
+    // TOP MENU ====================================================================================
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -87,6 +87,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // for making card with settings disappear after clicking elsewhere ----------------------------
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
@@ -185,13 +186,15 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             Chip labelOfNote = new Chip(foldersChips.getContext());
             labelOfNote.setText(label);
+            labelOfNote.setClickable(false);
+            labelOfNote.setFocusable(false);
             ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(this, null,0, R.style.Widget_App_Chip);
             labelOfNote.setChipDrawable(chipFolderDrawable);
 
             foldersChips.addView(labelOfNote);
-
         }
 
+        // OPTIONS CARDS ===========================================================================
 
         // creating label chips on CardView and handle saving note with label ----------------------
         labelsForChipsToSave = new HashSet<>(MainActivity.folders);
@@ -327,8 +330,6 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
 
         });
-
-
 
 
         // fabs for changing color -----------------------------------------------------------------

@@ -1,22 +1,17 @@
 package com.example.mynotes.adapters;
 
-import android.content.ContentProvider;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
-import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.model.Note;
 import com.google.android.material.chip.Chip;

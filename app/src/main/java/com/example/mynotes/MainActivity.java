@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuItemCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,13 +19,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.ShareActionProvider;
-import android.widget.Toast;
 
 
 import com.example.mynotes.adapters.NoteAdapter;
@@ -44,9 +37,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static CardView themeChange;
     private static CardView foldersCard;
+    private static BottomAppBar bottomAppBar;
 
     String folder = "Notes";
     public  static ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
@@ -69,14 +60,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // MENUS =======================================================================================
+    // TOP MENU ====================================================================================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater menuTopInflater = getMenuInflater();
         menuTopInflater.inflate(R.menu.notes_menu, menu);
-
-        //inflateBottomAppBar(menu);
 
 
         MenuItem searchViewItem = menu.findItem(R.id.search);
@@ -96,15 +85,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
         return super.onCreateOptionsMenu(menu);
-
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // super.onOptionsItemSelected(item);
 
         int id = item.getItemId();
         switch (id){
@@ -128,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // for making card with settings disappear after clicking elsewhere ----------------------------
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
@@ -208,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         noteAdapter = new NoteAdapter(notesToShow, this);
         listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
-
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -222,18 +208,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 listView.setItemChecked(i, true);
-                BottomAppBar bottomAppBar = (BottomAppBar) findViewById(R.id.bottomBar);
+                bottomAppBar = (BottomAppBar) findViewById(R.id.bottomBar);
                 bottomAppBar.setVisibility(View.VISIBLE);
                 return true;
             }
         });
-
 
 
         // bottom menu -----------------------------------------------------------------------------
@@ -262,9 +245,9 @@ public class MainActivity extends AppCompatActivity {
                                             sharedPreferences.edit().putString("Notes", json).apply();
 
                                             listView.setAdapter(noteAdapter);
+                                            bottomAppBar.setVisibility(View.INVISIBLE);
                                         }
                                     }).setNegativeButton("No", null).show();
-                            return true;
                         } else {
                             noteToEdit.addFolder("Recycle Bin");
                             notesToShow.remove(noteToEdit);
@@ -275,13 +258,15 @@ public class MainActivity extends AppCompatActivity {
                             sharedPreferences.edit().putString("Notes", json).apply();
 
                             listView.setAdapter(noteAdapter);
-                            return true;
+                            bottomAppBar.setVisibility(View.INVISIBLE);
                         }
+                        return true;
 
                     case R.id.copy: // copy the note -----------------------------------------------
                         return true;
+                    case R.id.labels: // set label of the note -------------------------------------
+                        return true;
                 }
-
 
                 return true;
             }
@@ -365,7 +350,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
 
 
     }
