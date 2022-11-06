@@ -349,7 +349,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                         }
                     });
                 }
-
                 editText.getText().clear();
             }
 
