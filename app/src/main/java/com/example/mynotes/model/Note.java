@@ -8,12 +8,14 @@ import java.util.Set;
 public class Note {
 
     private int id;
+    private String title;
     private String content;
     private String backgroundColor;
     private LocalDateTime dateTime;
     private Set<String> folders = new HashSet<>();
 
     public Note(String content) {
+        this.title = "";
         this.content = content;
         id = new Random().nextInt();
         folders.add("Notes");
@@ -25,6 +27,10 @@ public class Note {
     }
 
     public void setId(int id) {this.id = id;}
+
+    public String getTitle() {return title;}
+
+    public void setTitle(String title) {this.title = title;}
 
     public String getContent() {
         return content;

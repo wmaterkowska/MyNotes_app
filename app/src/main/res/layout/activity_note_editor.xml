@@ -11,6 +11,24 @@
 
     <!-- Edit Text main element **************************************************************** -->
     <EditText
+        android:id="@+id/edit_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:padding="5dp"
+        android:paddingStart="10dp"
+        android:background="@null"
+        android:textSize="22sp"
+        android:hint="Title"
+        android:textColorHint="@color/steel_teal_50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/edit_text" />
+
+    <EditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,12 +39,13 @@
         android:padding="5dp"
         android:paddingStart="10dp"
         android:background="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:hint="Note"
+        android:textColorHint="@color/steel_teal_50"
+        android:cursorVisible="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/edit_text_title" />
+
 
     <!-- ChipGroup of labels of the note ******************************************************* -->
     <com.google.android.material.chip.ChipGroup

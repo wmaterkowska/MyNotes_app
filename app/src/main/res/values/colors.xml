@@ -11,6 +11,7 @@
 
     <!-- colors mine -->
     <color name="steel_teal">#5D868D</color>
+    <color name="steel_teal_50">#805D868D</color>
     <color name="iceberg">#6DACD3</color>
 
 </resources>

@@ -2,6 +2,7 @@ package com.example.mynotes.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,9 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
     public View getView(int position, View listView, ViewGroup parent) {
         View v = listView;
-        TextView tv;
+        TextView tvContent;
+        TextView tvTitle;
+
         Note n = noteList.get(position);
         Set<String> folders = n.getFolders();
         Set<String> foldersForChips = new HashSet<>(folders);
@@ -61,12 +64,11 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
         NoteHolder holder = new NoteHolder();
 
-
         if (listView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.row_layout, null);
 
-            holder.foldersChipGroup = (ChipGroup) v.findViewById(R.id.chips_folders);
+            holder.foldersChipGroup = (ChipGroup) v.findViewById(R.id.labels_of_note);
             holder.foldersChipGroup.setChipSpacingHorizontal(2);
             holder.foldersChipGroup.setClickable(false);
             holder.foldersChipGroup.setFocusable(false);
@@ -86,9 +88,12 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
                 holder.foldersChipGroup.addView(folderChip);
             }
 
-            tv = (TextView) v.findViewById(R.id.content);
+            tvTitle = (TextView) v.findViewById(R.id.title);
+            tvContent = (TextView) v.findViewById(R.id.content);
 
-            holder.contentView = tv;
+            holder.titleView = tvTitle;
+            holder.contentView = tvContent;
+
             v.setTag(holder);
         } else {
             holder = (NoteHolder) v.getTag();
@@ -99,7 +104,18 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
             card1.setCardBackgroundColor(Color.parseColor(getItem(position).getBackgroundColor()));
         }
 
-        holder.contentView.setText(n.getContent());
+        if (n.getTitle() != "" && n.getTitle() != null) {
+            holder.titleView.setVisibility(View.VISIBLE);
+            holder.titleView.setText(n.getTitle());
+            holder.titleView.setPadding(20,0,20, 0);
+            holder.contentView.setVisibility(View.VISIBLE);
+            holder.contentView.setText(n.getContent());
+            holder.contentView.setPadding(20,0,20, 0);
+        } else {
+            holder.contentView.setVisibility(View.VISIBLE);
+            holder.contentView.setText(n.getContent());
+            holder.contentView.setPadding(20,0,20, 0);
+        }
 
         return v;
     }
@@ -111,9 +127,9 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
     // NOTE HOLDER ---------------------------------------------------------------------------------
     public static class NoteHolder {
+        public TextView titleView;
         public TextView contentView;
         public ChipGroup foldersChipGroup;
-
     }
 
     @Override
