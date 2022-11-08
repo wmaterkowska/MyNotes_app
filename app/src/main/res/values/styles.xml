@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.App" parent="Theme.MaterialComponents">
+        <item name="chipStyle">@style/Widget_App_Chip</item>
+    </style>
+
+    <style name="Widget_App_Chip"
+        parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">#4DFFFFFF</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="chipSurfaceColor">@android:color/transparent</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/steel_teal</item>
+
+        <item name="android:height">10dp</item>
+        <item name="chipMinHeight">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="chipMinTouchTargetSize">24dp</item>
+        <item name="iconSize">10dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:layout_margin">0dp</item>
+
+        <item name="android:textSize">6sp</item>
+    </style>
+
+
+</resources>

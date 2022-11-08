@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".NoteEditorActivity">
+
+    <item
+        android:id="@+id/color"
+        android:title="Color"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_color_palette">
+    </item>
+
+    <item
+        android:id="@+id/save_to_label"
+        android:title="Save to Folder"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_label_24">
+    </item>
+
+</menu>
