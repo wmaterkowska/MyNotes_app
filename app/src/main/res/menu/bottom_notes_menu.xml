@@ -15,10 +15,18 @@
         android:icon="@drawable/ic_baseline_content_copy_24">
     </item>
 
+    <!--
     <item
         android:id="@+id/labels"
         android:title="Labels"
         android:icon="@drawable/ic_baseline_label_24">
+    </item>
+    -->
+
+    <item
+        android:id="@+id/collapse"
+        android:title="Collapse"
+        android:icon="@drawable/ic_baseline_arrow_back_ios_new_24">
     </item>
 
 </menu>

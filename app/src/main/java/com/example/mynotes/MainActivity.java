@@ -277,8 +277,10 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Copied",Toast.LENGTH_SHORT).show();
                         bottomAppBar.setVisibility(View.INVISIBLE);
                         return true;
-                    case R.id.labels: // set label of the note -------------------------------------
-                        return true;
+                    // case R.id.labels: // set label of the note -------------------------------------
+                    //    return true;
+                    case R.id.collapse:
+                        bottomAppBar.setVisibility(View.INVISIBLE);
                 }
 
                 return true;

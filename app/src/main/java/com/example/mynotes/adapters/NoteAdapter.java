@@ -22,6 +22,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
@@ -162,8 +163,11 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
                 List<Note> nNoteList = new ArrayList<Note>();
 
                 for (Note n : noteList) {
-                    if (n.getContent().toUpperCase().contains(constraint.toString().toUpperCase()))
+                    if (n.getContent().toUpperCase().contains(constraint.toString().toUpperCase()) ){
                         nNoteList.add(n);
+                    } else if (n.getTitle().toUpperCase().contains(constraint.toString().toUpperCase())) {
+                        nNoteList.add(n);
+                    }
                 }
 
                 results.values = nNoteList;
