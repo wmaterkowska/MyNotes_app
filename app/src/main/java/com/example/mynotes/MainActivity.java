@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuTopInflater = getMenuInflater();
         menuTopInflater.inflate(R.menu.notes_menu, menu);
 
-
         MenuItem searchViewItem = menu.findItem(R.id.search);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
@@ -149,15 +148,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         // getting users choice of light/dark mode from SharedPreferences --------------------------
-        SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
-        int choice = settingsPreferences.getInt("Mode", 0);
-        if (choice == 1) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        } else if (choice == 2) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        }
+            SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
+            int choice = settingsPreferences.getInt("Mode", 0);
+            if (choice == 1) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            } else if (choice == 2) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            }
 
         // getting notes from sharedPreferences ----------------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -189,11 +188,13 @@ public class MainActivity extends AppCompatActivity {
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
 
+        notesToShow.clear();
         for (Note note : allNotes) {
             if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
                 notesToShow.add(note);
             }
         }
+
         noteAdapter = new NoteAdapter(notesToShow, this);
         listView.setAdapter(noteAdapter);
         listView.setTextFilterEnabled(true);
@@ -308,7 +309,8 @@ public class MainActivity extends AppCompatActivity {
                 settingsPreferences.edit().putInt("Mode", AppCompatDelegate.MODE_NIGHT_NO).apply();
 
                 listView.refreshDrawableState();
-                listView.setAdapter(noteAdapter);
+                noteAdapter.notifyDataSetChanged();
+                //listView.setAdapter(noteAdapter);
             }
         });
 
@@ -324,7 +326,8 @@ public class MainActivity extends AppCompatActivity {
                 settingsPreferences.edit().putInt("Mode", AppCompatDelegate.MODE_NIGHT_YES).apply();;
 
                 listView.refreshDrawableState();
-                listView.setAdapter(noteAdapter);
+                noteAdapter.notifyDataSetChanged();
+                //listView.setAdapter(noteAdapter);
             }
         });
 
