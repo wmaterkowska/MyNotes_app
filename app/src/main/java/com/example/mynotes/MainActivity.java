@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,10 +38,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
     String folder = "Notes";
     public  static ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
-
 
     public ListView getListView() {
         return listView;
@@ -82,8 +87,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
+                listView.setAdapter(noteAdapter);
                 noteAdapter.getFilter().filter(newText);
-                noteAdapter.resetData();
+
+                noteAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -167,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (notesJson == null) {
             Note exampleNote = new Note("Example note");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                exampleNote.setDateTime(LocalDateTime.MIN.toString());
+            }
             allNotes.add(exampleNote);
         } else {
             allNotes = notesJson;
@@ -188,6 +199,10 @@ public class MainActivity extends AppCompatActivity {
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            allNotes.sort(Comparator.comparing(Note::getDateTime).reversed());
+        }
+
         notesToShow.clear();
         for (Note note : allNotes) {
             if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
@@ -204,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                int actualPosition = allNotes.indexOf(adapterView.getItemAtPosition(i));
+                // int actualPosition = allNotes.indexOf(adapterView.getItemAtPosition(i));
+                int actualPosition = allNotes.indexOf(noteAdapter.getItem(i));
 
                 Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
                 intent.putExtra("noteId", actualPosition);

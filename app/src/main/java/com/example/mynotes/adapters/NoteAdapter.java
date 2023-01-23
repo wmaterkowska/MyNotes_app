@@ -29,7 +29,7 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
     private ArrayList<Note> noteList;
     private Context context;
-    private Filter noteFilter;
+    private NoteFilter noteFilter;
     private ArrayList<Note> origNoteList;
 
     public NoteAdapter(ArrayList<Note> noteList, Context ctx) {
@@ -56,6 +56,7 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         View v = listView;
         TextView tvTitle;
         TextView tvContent;
+        CardView cv;
 
         Note n = noteList.get(position);
         Set<String> folders = n.getFolders();
@@ -120,9 +121,10 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         }
 
         // background color ------------------------------------------------------------------------
-        holder.cardView = v.findViewById(R.id.cardView);
-        if (getItem(position).getBackgroundColor() != null) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor(getItem(position).getBackgroundColor()));
+        cv = v.findViewById(R.id.cardView);
+        holder.cardView = cv;
+        if (n.getBackgroundColor() != null) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor(n.getBackgroundColor()));
         }
 
         return v;
@@ -174,10 +176,11 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
                         nNoteList.add(n);
                     } else if (n.getTitle().toUpperCase().contains(constraint.toString().toUpperCase())) {
                         nNoteList.add(n);
-                    } else {
-                        nNoteList.remove(n);
-                     }
+                    } //else {
+                      //  nNoteList.remove(n);
+                    // }
                 }
+                notifyDataSetChanged();
                 results.values = nNoteList;
                 results.count = nNoteList.size();
             }
@@ -191,6 +194,7 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
                 //notifyDataSetChanged();
                 notifyDataSetInvalidated();
             } else {
+                resetData();
                 noteList = (ArrayList<Note>) filterResults.values;
                 notifyDataSetChanged();
             }

@@ -1,6 +1,9 @@
 package com.example.mynotes.model;
 
+import android.os.Build;
+
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -11,7 +14,7 @@ public class Note {
     private String title;
     private String content;
     private String backgroundColor;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private Set<String> folders = new HashSet<>();
 
     public Note(String content) {
@@ -20,6 +23,9 @@ public class Note {
         id = new Random().nextInt();
         folders.add("Notes");
         folders.add("All Notes");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dateTime = LocalDateTime.now().toString();
+        }
     }
 
     public long getId() {
@@ -48,11 +54,11 @@ public class Note {
         this.backgroundColor = backgroundColor;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 

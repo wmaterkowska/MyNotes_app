@@ -1,5 +1,6 @@
 package com.example.mynotes;
 
+import static com.example.mynotes.MainActivity.noteAdapter;
 import static com.example.mynotes.R.*;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +34,8 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -118,7 +122,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(layout.activity_note_editor);
 
-        MainActivity.listView.setAdapter(MainActivity.noteAdapter);
+        // MainActivity.listView.setAdapter(MainActivity.noteAdapter);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
@@ -129,20 +133,21 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText editTextContent = findViewById(id.edit_text);
         Intent intent = getIntent();
 
+
         notePosition = intent.getIntExtra("noteId", -1);
 
         if (notePosition != -1) {
             note = MainActivity.allNotes.get(notePosition);
             editTextTitle.setText(note.getTitle());
             editTextContent.setText(note.getContent());
-            notePosition = MainActivity.allNotes.indexOf(note);
         } else {
             note = new Note("");
             MainActivity.notesToShow.add(0, note);
             MainActivity.allNotes.add(0,note);
-            notePosition = MainActivity.allNotes.indexOf(note);
-            MainActivity.noteAdapter.notifyDataSetChanged();
         }
+
+        noteAdapter.notifyDataSetChanged();
+        Integer noteToShowPosition = MainActivity.notesToShow.indexOf(note);
 
 
         // managing EditText for Note and changes in note ------------------------------------------
@@ -158,8 +163,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.allNotes.get(notePosition).setTitle(String.valueOf(charSequence));
-                MainActivity.noteAdapter.notifyDataSetChanged();
+                MainActivity.allNotes.get(noteToShowPosition).setTitle(String.valueOf(charSequence));
+                noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -180,8 +185,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.allNotes.get(notePosition).setContent(String.valueOf(charSequence));
-                MainActivity.noteAdapter.notifyDataSetChanged();
+                MainActivity.allNotes.get(noteToShowPosition).setContent(String.valueOf(charSequence));
+                noteAdapter.notifyDataSetChanged();
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -213,7 +218,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             labelOfNote.setText(label);
             labelOfNote.setClickable(false);
             labelOfNote.setFocusable(false);
-            ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(this, null,0, R.style.Widget_App_Chip);
+            ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(this, null,0, style.Widget_App_Chip);
             labelOfNote.setChipDrawable(chipFolderDrawable);
 
             foldersChips.addView(labelOfNote);
@@ -226,7 +231,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         labelsForChipsToSave.remove("Notes");
         labelsForChipsToSave.remove("All Notes");
 
-        ChipGroup labelsChips = findViewById(R.id.chip_group_labels_to_save);
+        ChipGroup labelsChips = findViewById(id.chip_group_labels_to_save);
 
         for (String folder : labelsForChipsToSave) {
             Chip newChip = new Chip(labelsChips.getContext());
@@ -249,6 +254,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     sharedPreferences.edit().putString("Notes", json).apply();
 
                     recreate();
+                    noteAdapter.notifyDataSetChanged();
                 }
             });
 
@@ -257,7 +263,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 public boolean onLongClick(View view) {
                     new AlertDialog.Builder(NoteEditorActivity.this)
                             .setTitle(" ")
-                            .setIcon(R.drawable.ic_baseline_delete_24)
+                            .setIcon(drawable.ic_baseline_delete_24)
                             .setTitle("Do you want to delete this label?")
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
@@ -270,6 +276,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                                             note.getFolders().remove(folder);
                                         }
                                     }
+
+                                    noteAdapter.notifyDataSetChanged();
 
                                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
                                     Gson gson = new Gson();
@@ -285,11 +293,11 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         // button to add the folder ----------------------------------------------------------------
         FloatingActionButton addLabelButton;
-        addLabelButton = findViewById(R.id.add_label_button);
+        addLabelButton = findViewById(id.add_label_button);
         addLabelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText editText = findViewById(R.id.add_label_input);
+                EditText editText = findViewById(id.add_label_input);
                 String newLabel = editText.getText().toString();
 
                 if( newLabel != "") {
@@ -325,7 +333,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                         public boolean onLongClick(View view) {
                             new AlertDialog.Builder(NoteEditorActivity.this)
                                     .setTitle(" ")
-                                    .setIcon(R.drawable.ic_baseline_delete_24)
+                                    .setIcon(drawable.ic_baseline_delete_24)
                                     .setTitle("Do you want to delete this label?")
                                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
@@ -371,10 +379,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                         editTextContent.setBackgroundColor(Color.parseColor(colors.get(key)));
                         note.setBackgroundColor(colors.get(key));
 
-                        CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                        CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                         card.setCardBackgroundColor(Color.parseColor(colors.get(key)));
 
-                        MainActivity.notesToShow.set(notePosition, note);
+                        MainActivity.allNotes.set(notePosition, note);
 
                         ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
                         layout_edit.setBackgroundColor(Color.parseColor(colors.get(key)));
@@ -402,7 +410,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     }
                     editTextContent.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
-                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#FFFFFF"));
 
                     MainActivity.notesToShow.set(notePosition, note);
@@ -430,7 +438,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     }
                     editTextContent.setBackgroundColor(Color.parseColor("#111111"));
 
-                    CardView card = MainActivity.listView.getChildAt(notePosition).findViewById(id.cardView);
+                    CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#111111"));
 
                     MainActivity.notesToShow.set(notePosition, note);
