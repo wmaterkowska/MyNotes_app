@@ -71,6 +71,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         
         switch (item.getItemId()) {
             case android.R.id.home:
+                noteAdapter.resetData();
+                noteAdapter.notifyDataSetChanged();
                 this.finish();
                 return true;
             case id.color:
@@ -149,6 +151,14 @@ public class NoteEditorActivity extends AppCompatActivity {
         noteAdapter.notifyDataSetChanged();
         Integer noteToShowPosition = MainActivity.notesToShow.indexOf(note);
 
+        // changing the background color
+        if(note.getBackgroundColor() != null) {
+            editTextContent.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
+            ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
+            layout_edit.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
+            noteAdapter.notifyDataSetChanged();
+        }
+
 
         // managing EditText for Note and changes in note ------------------------------------------
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -163,14 +173,19 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.allNotes.get(noteToShowPosition).setTitle(String.valueOf(charSequence));
-                noteAdapter.notifyDataSetChanged();
+                MainActivity.notesToShow.get(noteToShowPosition).setTitle(String.valueOf(charSequence));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    note.setDateTime(LocalDateTime.now().toString());
+                }
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.allNotes);
                 sharedPreferences.edit().putString("Notes", json).apply();
+
+                noteAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -185,14 +200,19 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                MainActivity.allNotes.get(noteToShowPosition).setContent(String.valueOf(charSequence));
-                noteAdapter.notifyDataSetChanged();
+                MainActivity.notesToShow.get(noteToShowPosition).setContent(String.valueOf(charSequence));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    note.setDateTime(LocalDateTime.now().toString());
+                }
 
                 // Creating Object of SharedPreferences to store data in the phone
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                 Gson gson = new Gson();
                 String json = gson.toJson(MainActivity.allNotes);
                 sharedPreferences.edit().putString("Notes", json).apply();
+
+                noteAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -377,12 +397,15 @@ public class NoteEditorActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if (MainActivity.listView != null) {
                         editTextContent.setBackgroundColor(Color.parseColor(colors.get(key)));
-                        note.setBackgroundColor(colors.get(key));
+
+                        MainActivity.notesToShow.get(noteToShowPosition).setBackgroundColor(colors.get(key));
+
+                        // note.setBackgroundColor(colors.get(key));
 
                         CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                         card.setCardBackgroundColor(Color.parseColor(colors.get(key)));
 
-                        MainActivity.allNotes.set(notePosition, note);
+                        // MainActivity.allNotes.set(notePosition, note);
 
                         ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
                         layout_edit.setBackgroundColor(Color.parseColor(colors.get(key)));
@@ -391,6 +414,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         String json = gson.toJson(MainActivity.allNotes);
                         sharedPreferences.edit().putString("Notes", json).apply();
+
+                        noteAdapter.notifyDataSetChanged();
                     }
                 }
             });
@@ -413,7 +438,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#FFFFFF"));
 
-                    MainActivity.notesToShow.set(notePosition, note);
+                    // MainActivity.notesToShow.set(notePosition, note);
 
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -441,7 +466,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#111111"));
 
-                    MainActivity.notesToShow.set(notePosition, note);
+                    // MainActivity.notesToShow.set(notePosition, note);
 
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -452,12 +477,6 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
-        // changing the background color
-        if(note.getBackgroundColor() != null) {
-            editTextContent.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
-            ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
-            layout_edit.setBackgroundColor(Color.parseColor(note.getBackgroundColor()));
-        }
     }
 
 

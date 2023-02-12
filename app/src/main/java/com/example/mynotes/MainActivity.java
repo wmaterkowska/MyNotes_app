@@ -199,15 +199,15 @@ public class MainActivity extends AppCompatActivity {
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            allNotes.sort(Comparator.comparing(Note::getDateTime).reversed());
-        }
-
         notesToShow.clear();
         for (Note note : allNotes) {
             if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
                 notesToShow.add(note);
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            notesToShow.sort(Comparator.comparing(Note::getDateTime).reversed());
         }
 
         noteAdapter = new NoteAdapter(notesToShow, this);

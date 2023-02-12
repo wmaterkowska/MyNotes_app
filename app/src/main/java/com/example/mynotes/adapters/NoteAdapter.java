@@ -2,6 +2,7 @@ package com.example.mynotes.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +60,11 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         TextView tvContent;
         CardView cv;
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            noteList.sort(Comparator.comparing(Note::getDateTime).reversed());
+        }
+
         Note n = noteList.get(position);
         Set<String> folders = n.getFolders();
         Set<String> foldersForChips = new HashSet<>(folders);
@@ -69,6 +76,7 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         if (listView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.row_layout, null);
+
 
             // view of the labels of the note ------------------------------------------------------
             holder.foldersChipGroup = (ChipGroup) v.findViewById(R.id.labels_of_note);
@@ -100,6 +108,7 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
             v.setTag(holder);
         } else {
             holder = (NoteHolder) v.getTag();
+            v.refreshDrawableState();
         }
 
         // view of the title and content of the note -----------------------------------------------
