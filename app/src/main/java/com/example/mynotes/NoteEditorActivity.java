@@ -71,8 +71,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         
         switch (item.getItemId()) {
             case android.R.id.home:
-                noteAdapter.resetData();
-                noteAdapter.notifyDataSetChanged();
+                MainActivity.listView.setAdapter(noteAdapter);
                 this.finish();
                 return true;
             case id.color:
