@@ -165,6 +165,18 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
     }
 
 
+    @Override
+    public int getViewTypeCount() {
+        return getCount();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+
+
     // NOTE FILTER ---------------------------------------------------------------------------------
     private class NoteFilter extends Filter {
 
