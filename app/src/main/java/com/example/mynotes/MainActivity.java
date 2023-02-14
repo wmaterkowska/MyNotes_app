@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchViewItem = menu.findItem(R.id.search);
 
+
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -346,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
                 //listView.setAdapter(noteAdapter);
             }
         });
-
 
         // chips for choosing folder to show -------------------------------------------------------
         for (String folder : folders) {

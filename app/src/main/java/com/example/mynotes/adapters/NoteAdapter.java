@@ -12,6 +12,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import com.example.mynotes.R;
@@ -80,16 +81,17 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
             // view of the labels of the note ------------------------------------------------------
             holder.foldersChipGroup = (ChipGroup) v.findViewById(R.id.labels_of_note);
-            holder.foldersChipGroup.setChipSpacingHorizontal(2);
+            holder.foldersChipGroup.setChipSpacingHorizontal(5);
             holder.foldersChipGroup.setClickable(false);
             holder.foldersChipGroup.setFocusable(false);
             for (String folder : foldersForChips) {
                 Chip folderChip = new Chip(context);
                 folderChip.setText(folder);
-                folderChip.setTextSize(8);
+                folderChip.setTextSize(10);
                 folderChip.setEnsureMinTouchTargetSize(false);
-                folderChip.setHeight(40);
+                folderChip.setHeight(50);
                 folderChip.setChipMinHeight(10);
+                folderChip.setPadding(5,0,5,0);
                 folderChip.setBackgroundColor(Color.TRANSPARENT);
                 folderChip.setChipBackgroundColor(null);
 
@@ -134,6 +136,8 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         holder.cardView = cv;
         if (n.getBackgroundColor() != null) {
             holder.cardView.setCardBackgroundColor(Color.parseColor(n.getBackgroundColor()));
+        } else if (n.getBackgroundColor() == null && AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
         }
 
         return v;

@@ -1,5 +1,6 @@
 package com.example.mynotes;
 
+import static com.example.mynotes.MainActivity.folders;
 import static com.example.mynotes.MainActivity.noteAdapter;
 import static com.example.mynotes.R.*;
 
@@ -72,6 +73,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 MainActivity.listView.setAdapter(noteAdapter);
+                // MainActivity.folders.notifyAll();
                 this.finish();
                 return true;
             case id.color:
@@ -265,12 +267,19 @@ public class NoteEditorActivity extends AppCompatActivity {
                         note.getFolders().remove(folder);
                     } else {
                         note.addFolder(folder);
+                        MainActivity.folders.add(folder);
+
                     }
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
+
+                    SharedPreferences sharedPreferencesFolders = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                    Gson gsonFolders = new Gson();
+                    String jsonFolders = gsonFolders.toJson(MainActivity.folders);
+                    sharedPreferencesFolders.edit().putString("Folders", jsonFolders).apply();
 
                     recreate();
                     noteAdapter.notifyDataSetChanged();
@@ -298,10 +307,15 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                                     noteAdapter.notifyDataSetChanged();
 
-                                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                                     Gson gson = new Gson();
-                                    String json = gson.toJson(MainActivity.folders);
-                                    sharedPreferences.edit().putString("Folders", json).apply();
+                                    String json = gson.toJson(MainActivity.allNotes);
+                                    sharedPreferences.edit().putString("Notes", json).apply();
+
+                                    SharedPreferences sharedPreferencesFolders = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                                    Gson gsonFolders = new Gson();
+                                    String jsonFolders = gsonFolders.toJson(MainActivity.folders);
+                                    sharedPreferencesFolders.edit().putString("Folders", jsonFolders).apply();
                                 }
                             }).setNegativeButton("No", null).show();
                     return true;
@@ -428,22 +442,29 @@ public class NoteEditorActivity extends AppCompatActivity {
                 if (MainActivity.listView != null) {
                     int mode = AppCompatDelegate.getDefaultNightMode();
                     if (mode == 1) {
-                        note.setBackgroundColor(null);
+                        // note.setBackgroundColor(null);
+                        MainActivity.notesToShow.get(noteToShowPosition).setBackgroundColor(null);
                     } else if (mode == 2){
-                        note.setBackgroundColor("#FFFFFF");
+                        MainActivity.notesToShow.get(noteToShowPosition).setBackgroundColor("#FFFFFF");
+                        // note.setBackgroundColor("#FFFFFF");
                     }
+
                     editTextContent.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
                     CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#FFFFFF"));
 
-                    // MainActivity.notesToShow.set(notePosition, note);
+                    ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
+                    layout_edit.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
+                    // MainActivity.notesToShow.set(notePosition, note);
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
+
+                    noteAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -456,22 +477,26 @@ public class NoteEditorActivity extends AppCompatActivity {
                 if (MainActivity.listView != null) {
                     int mode = AppCompatDelegate.getDefaultNightMode();
                     if (mode == 2) {
-                        note.setBackgroundColor(null);
+                        MainActivity.notesToShow.get(noteToShowPosition).setBackgroundColor(null);
                     } else if (mode == 1){
-                        note.setBackgroundColor("#111111");
+                        MainActivity.notesToShow.get(noteToShowPosition).setBackgroundColor("#111111");
                     }
                     editTextContent.setBackgroundColor(Color.parseColor("#111111"));
 
                     CardView card = MainActivity.listView.getChildAt(noteToShowPosition).findViewById(id.cardView);
                     card.setCardBackgroundColor(Color.parseColor( "#111111"));
 
-                    // MainActivity.notesToShow.set(notePosition, note);
+                    ConstraintLayout layout_edit = findViewById(id.layout_edit_note);
+                    layout_edit.setBackgroundColor(Color.parseColor("#111111"));
 
+                    // MainActivity.notesToShow.set(notePosition, note);
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
+
+                    noteAdapter.notifyDataSetChanged();
                 }
             }
         });
