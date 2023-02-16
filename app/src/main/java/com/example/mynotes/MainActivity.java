@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Collections.reverse(allNotes);
 
-
         // getting users choice of light/dark mode from SharedPreferences --------------------------
             SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
             int choice = settingsPreferences.getInt("Mode", 0);
@@ -309,8 +308,8 @@ public class MainActivity extends AppCompatActivity {
         // floating action button: add note --------------------------------------------------------
         FloatingActionButton fabAdd = findViewById(R.id.add_fab);
         fabAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
-            startActivity(intent);
+            Intent intentAddNote = new Intent(getApplicationContext(), NoteEditorActivity.class);
+            startActivity(intentAddNote);
         });
 
 
@@ -349,6 +348,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // chips for choosing folder to show -------------------------------------------------------
+
         for (String folder : folders) {
             ChipGroup foldersChips = findViewById(R.id.chip_group);
             Chip newChip = new Chip(foldersChips.getContext());
@@ -382,7 +382,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-
         }
 
 

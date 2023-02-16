@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -135,7 +136,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText editTextTitle = findViewById(id.edit_text_title);
         EditText editTextContent = findViewById(id.edit_text);
         Intent intent = getIntent();
-
 
         notePosition = intent.getIntExtra("noteId", -1);
 
@@ -248,7 +248,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         // OPTIONS CARDS ===========================================================================
 
         // creating label chips on CardView and handle saving note with label ----------------------
-        labelsForChipsToSave = new HashSet<>(MainActivity.folders);
+        labelsForChipsToSave = new HashSet<>(folders);
         labelsForChipsToSave.remove("Notes");
         labelsForChipsToSave.remove("All Notes");
 
@@ -281,7 +281,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                     String jsonFolders = gsonFolders.toJson(MainActivity.folders);
                     sharedPreferencesFolders.edit().putString("Folders", jsonFolders).apply();
 
-                    recreate();
+                    startActivity(getIntent());
+                    finish();
+                    overridePendingTransition(0,0);
+
                     noteAdapter.notifyDataSetChanged();
                 }
             });
@@ -305,8 +308,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                                         }
                                     }
 
-                                    noteAdapter.notifyDataSetChanged();
-
                                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                                     Gson gson = new Gson();
                                     String json = gson.toJson(MainActivity.allNotes);
@@ -316,12 +317,17 @@ public class NoteEditorActivity extends AppCompatActivity {
                                     Gson gsonFolders = new Gson();
                                     String jsonFolders = gsonFolders.toJson(MainActivity.folders);
                                     sharedPreferencesFolders.edit().putString("Folders", jsonFolders).apply();
+
+                                    startActivity(getIntent());
+                                    finish();
+                                    overridePendingTransition(0,0);
+
+                                    noteAdapter.notifyDataSetChanged();
                                 }
                             }).setNegativeButton("No", null).show();
                     return true;
                 }
             });
-
         }
 
         // button to add the folder ----------------------------------------------------------------
@@ -336,6 +342,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 if( newLabel != "") {
                     if (!MainActivity.folders.contains(newLabel)) {
                         MainActivity.folders.add(newLabel);
+                        labelsForChipsToSave.add(newLabel);
                     }
                     SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
@@ -345,50 +352,15 @@ public class NoteEditorActivity extends AppCompatActivity {
                     Chip newChip = new Chip(labelsChips.getContext());
                     newChip.setText(newLabel);
                     labelsChips.addView(newChip);
+                    labelsChips.childDrawableStateChanged(newChip);
+                    labelsChips.refreshDrawableState();
 
-                    newChip.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                    startActivity(getIntent());
+                    finish();
+                    overridePendingTransition(0,0);
 
-                            note.addFolder(newLabel);
+                    noteAdapter.notifyDataSetChanged();
 
-                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                            Gson gson = new Gson();
-                            String json = gson.toJson(MainActivity.allNotes);
-                            sharedPreferences.edit().putString("Notes", json).apply();
-
-                            recreate();
-                        }
-                    });
-
-                    newChip.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View view) {
-                            new AlertDialog.Builder(NoteEditorActivity.this)
-                                    .setTitle(" ")
-                                    .setIcon(drawable.ic_baseline_delete_24)
-                                    .setTitle("Do you want to delete this label?")
-                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            labelsChips.removeView(newChip);
-                                            MainActivity.folders.remove(newLabel);
-
-                                            for (Note note : MainActivity.allNotes) {
-                                                if (note.getFolders().contains(newLabel)) {
-                                                    note.getFolders().remove(newLabel);
-                                                }
-                                            }
-
-                                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                                            Gson gson = new Gson();
-                                            String json = gson.toJson(MainActivity.folders);
-                                            sharedPreferences.edit().putString("Folders", json).apply();
-                                        }
-                                    }).setNegativeButton("No", null).show();
-                            return true;
-                        }
-                    });
                 }
                 editText.getText().clear();
             }

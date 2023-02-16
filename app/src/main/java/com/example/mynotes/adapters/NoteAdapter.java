@@ -171,6 +171,9 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
     @Override
     public int getViewTypeCount() {
+        if (getCount() == 0) {
+            return 1;
+        }
         return getCount();
     }
 
