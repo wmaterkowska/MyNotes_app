@@ -43,10 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,11 +54,11 @@ public class MainActivity extends AppCompatActivity {
     public  static ListView listView;
 
     private static CardView themeChange;
-    private static CardView foldersCard;
+    private static CardView labelsCard;
     private static BottomAppBar bottomAppBar;
 
-    String folder = "Notes";
-    public  static ArrayList<String> folders = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
+    String label = "Notes";
+    public  static ArrayList<String> labels = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
 
     public ListView getListView() {
         return listView;
@@ -112,12 +109,12 @@ public class MainActivity extends AppCompatActivity {
                     themeChange.setVisibility(View.INVISIBLE);
                 }
                 return true;
-            case R.id.folders:
-                foldersCard = findViewById(R.id.folders_card);
-                if (foldersCard.getVisibility() == View.INVISIBLE) {
-                    foldersCard.setVisibility(View.VISIBLE);
+            case R.id.labels:
+                labelsCard = findViewById(R.id.labels_card);
+                if (labelsCard.getVisibility() == View.INVISIBLE) {
+                    labelsCard.setVisibility(View.VISIBLE);
                 } else {
-                    foldersCard.setVisibility(View.INVISIBLE);
+                    labelsCard.setVisibility(View.INVISIBLE);
                 }
             default:
                 return super.onOptionsItemSelected(item);
@@ -129,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
         themeChange = findViewById(R.id.theme_card);
-        foldersCard = findViewById(R.id.folders_card);
+        labelsCard = findViewById(R.id.labels_card);
 
         themeChange.getGlobalVisibleRect(viewRect);
         if (themeChange.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
@@ -137,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        foldersCard.getGlobalVisibleRect(viewRect);
-        if (foldersCard.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
-            foldersCard.setVisibility(View.INVISIBLE);
+        labelsCard.getGlobalVisibleRect(viewRect);
+        if (labelsCard.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+            labelsCard.setVisibility(View.INVISIBLE);
             return true;
         }
 
@@ -183,25 +180,26 @@ public class MainActivity extends AppCompatActivity {
             allNotes = notesJson;
         }
 
-        // getting folders from sharedPreferences --------------------------------------------------
-        SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-        String jsonFoldersFromPref = foldersPreferences.getString("Folders", null);
-        Set<String> gsonFolders = gson.fromJson(jsonFoldersFromPref, Set.class);
+        // getting labels from sharedPreferences --------------------------------------------------
+        SharedPreferences labelsPreferences = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
+        String jsonLabelsFromPref = labelsPreferences.getString("Labels", null);
+        Set<String> gsonLabels = gson.fromJson(jsonLabelsFromPref, Set.class);
 
-        if (gsonFolders != null) {
-            for (String folder : gsonFolders) {
-                if (!folders.contains(folder)) {
-                    folders.add(folder);
+        if (gsonLabels != null) {
+            for (String label : gsonLabels) {
+                if (!labels.contains(label)) {
+                    labels.add(label);
                 }
             }
         }
+
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
 
         notesToShow.clear();
         for (Note note : allNotes) {
-            if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
+            if (note.getLabels().contains(label) && !note.getLabels().contains("Recycle Bin")) {
                 notesToShow.add(note);
             }
         }
@@ -248,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.trash: // delete the note --------------------------------------------
-                        if (noteToEdit.getFolders().contains("Recycle Bin")) {
+                        if (noteToEdit.getLabels().contains("Recycle Bin")) {
                             new AlertDialog.Builder(MainActivity.this)
                                     .setTitle(" ")
                                     .setIcon(R.drawable.ic_baseline_delete_24)
@@ -269,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }).setNegativeButton("No", null).show();
                         } else {
-                            noteToEdit.addFolder("Recycle Bin");
+                            noteToEdit.addLabel("Recycle Bin");
                             notesToShow.remove(noteToEdit);
 
                             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
@@ -347,21 +345,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // chips for choosing folder to show -------------------------------------------------------
+        // chips for choosing selection of notes to show -------------------------------------------
+        for (String label : labels) {
+            ChipGroup labelsChips = findViewById(R.id.chip_group);
+            Chip newChip = new Chip(labelsChips.getContext());
+            newChip.setText(label);
+            labelsChips.addView(newChip);
 
-        for (String folder : folders) {
-            ChipGroup foldersChips = findViewById(R.id.chip_group);
-            Chip newChip = new Chip(foldersChips.getContext());
-            newChip.setText(folder);
-            foldersChips.addView(newChip);
-
-            if (folder == "Recycle Bin" || folder == "All Notes") {
+            if (label == "Recycle Bin" || label == "All Notes") {
                 newChip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         notesToShow.clear();
                         for (Note note : allNotes) {
-                            if (note.getFolders().contains(folder)) {
+                            if (note.getLabels().contains(label)) {
                                 notesToShow.add(note);
                             }
                         }
@@ -374,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         notesToShow.clear();
                         for (Note note : allNotes) {
-                            if (note.getFolders().contains(folder) && !note.getFolders().contains("Recycle Bin")) {
+                            if (note.getLabels().contains(label) && !note.getLabels().contains("Recycle Bin")) {
                                 notesToShow.add(note);
                             }
                         }

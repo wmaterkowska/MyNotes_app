@@ -3,7 +3,6 @@ package com.example.mynotes.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
@@ -67,10 +65,10 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         }
 
         Note n = noteList.get(position);
-        Set<String> folders = n.getFolders();
-        Set<String> foldersForChips = new HashSet<>(folders);
-        foldersForChips.remove("Notes");
-        foldersForChips.remove("All Notes");
+        Set<String> labels = n.getLabels();
+        Set<String> labelsForChipsOfNote = new HashSet<>(labels);
+        labelsForChipsOfNote.remove("Notes");
+        labelsForChipsOfNote.remove("All Notes");
 
         NoteHolder holder = new NoteHolder();
 
@@ -80,25 +78,25 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
 
 
             // view of the labels of the note ------------------------------------------------------
-            holder.foldersChipGroup = (ChipGroup) v.findViewById(R.id.labels_of_note);
-            holder.foldersChipGroup.setChipSpacingHorizontal(5);
-            holder.foldersChipGroup.setClickable(false);
-            holder.foldersChipGroup.setFocusable(false);
-            for (String folder : foldersForChips) {
-                Chip folderChip = new Chip(context);
-                folderChip.setText(folder);
-                folderChip.setTextSize(10);
-                folderChip.setEnsureMinTouchTargetSize(false);
-                folderChip.setHeight(50);
-                folderChip.setChipMinHeight(10);
-                folderChip.setPadding(5,0,5,0);
-                folderChip.setBackgroundColor(Color.TRANSPARENT);
-                folderChip.setChipBackgroundColor(null);
+            holder.labelsChipGroup = (ChipGroup) v.findViewById(R.id.labels_of_note);
+            holder.labelsChipGroup.setChipSpacingHorizontal(5);
+            holder.labelsChipGroup.setClickable(false);
+            holder.labelsChipGroup.setFocusable(false);
+            for (String label : labelsForChipsOfNote) {
+                Chip labelChip = new Chip(context);
+                labelChip.setText(label);
+                labelChip.setTextSize(10);
+                labelChip.setEnsureMinTouchTargetSize(false);
+                labelChip.setHeight(50);
+                labelChip.setChipMinHeight(10);
+                labelChip.setPadding(5,0,5,0);
+                labelChip.setBackgroundColor(Color.TRANSPARENT);
+                labelChip.setChipBackgroundColor(null);
 
-                ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(context, null,0, R.style.Widget_App_Chip);
-                folderChip.setChipDrawable(chipFolderDrawable);
+                ChipDrawable chipLabelDrawable = ChipDrawable.createFromAttributes(context, null,0, R.style.Widget_App_Chip);
+                labelChip.setChipDrawable(chipLabelDrawable);
 
-                holder.foldersChipGroup.addView(folderChip);
+                holder.labelsChipGroup.addView(labelChip);
             }
 
             tvTitle = (TextView) v.findViewById(R.id.title);
@@ -152,7 +150,7 @@ public class NoteAdapter extends ArrayAdapter<Note> implements Filterable {
         public CardView cardView;
         public TextView titleView;
         public TextView contentView;
-        public ChipGroup foldersChipGroup;
+        public ChipGroup labelsChipGroup;
     }
 
     @Override

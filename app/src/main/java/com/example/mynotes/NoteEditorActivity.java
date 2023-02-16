@@ -1,6 +1,6 @@
 package com.example.mynotes;
 
-import static com.example.mynotes.MainActivity.folders;
+import static com.example.mynotes.MainActivity.labels;
 import static com.example.mynotes.MainActivity.noteAdapter;
 import static com.example.mynotes.R.*;
 
@@ -36,10 +36,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,7 +47,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     static Note note;
 
     CardView colorPalette;
-    CardView saveToFolder;
+    CardView saveToLabel;
 
     Set<String> labelsOfNote;
     Set<String> labelsForChipsToSave;
@@ -69,12 +67,12 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         colorPalette = findViewById(id.colorPaletteCard);
-        saveToFolder = findViewById(id.save_to_label);
+        saveToLabel = findViewById(id.save_to_label);
         
         switch (item.getItemId()) {
             case android.R.id.home:
                 MainActivity.listView.setAdapter(noteAdapter);
-                // MainActivity.folders.notifyAll();
+                // MainActivity.labels.notifyAll();
                 this.finish();
                 return true;
             case id.color:
@@ -85,10 +83,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                 }
                 return true;
             case id.save_to_label:
-                if (saveToFolder.getVisibility() == View.INVISIBLE){
-                    saveToFolder.setVisibility(View.VISIBLE);
+                if (saveToLabel.getVisibility() == View.INVISIBLE){
+                    saveToLabel.setVisibility(View.VISIBLE);
                 } else {
-                    saveToFolder.setVisibility(View.INVISIBLE);
+                    saveToLabel.setVisibility(View.INVISIBLE);
                 }
 
         }
@@ -100,7 +98,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
         colorPalette = findViewById(id.colorPaletteCard);
-        saveToFolder = findViewById(id.save_to_label);
+        saveToLabel = findViewById(id.save_to_label);
 
         colorPalette.getGlobalVisibleRect(viewRect);
         if (colorPalette.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
@@ -108,9 +106,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             return true;
         }
 
-        saveToFolder.getGlobalVisibleRect(viewRect);
-        if (saveToFolder.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
-            saveToFolder.setVisibility(View.INVISIBLE);
+        saveToLabel.getGlobalVisibleRect(viewRect);
+        if (saveToLabel.getVisibility() == View.VISIBLE && !viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+            saveToLabel.setVisibility(View.INVISIBLE);
             return true;
         }
 
@@ -223,51 +221,53 @@ public class NoteEditorActivity extends AppCompatActivity {
 
 
         // creating chips of the labels of the note -----------------------------------------------
-        labelsOfNote = new HashSet<>(note.getFolders());
+        labelsOfNote = new HashSet<>(note.getLabels());
         labelsOfNote.remove("Notes");
         labelsOfNote.remove("All Notes");
 
         for (String label : labelsOfNote) {
-            ChipGroup foldersChips = findViewById(id.chip_group_folder_of_the_note);
-            foldersChips.setChipSpacingHorizontal(2);
-            foldersChips.setPadding(0,0,0,0);
-            foldersChips.setClickable(false);
-            foldersChips.setFocusable(false);
-            foldersChips.setBackgroundColor(Color.TRANSPARENT);
+            ChipGroup labelsChips = findViewById(id.chip_group_labels_of_the_note);
+            labelsChips.setChipSpacingHorizontal(2);
+            labelsChips.setPadding(0,0,0,0);
+            labelsChips.setClickable(false);
+            labelsChips.setFocusable(false);
+            labelsChips.setBackgroundColor(Color.TRANSPARENT);
 
-            Chip labelOfNote = new Chip(foldersChips.getContext());
+            Chip labelOfNote = new Chip(labelsChips.getContext());
             labelOfNote.setText(label);
             labelOfNote.setClickable(false);
             labelOfNote.setFocusable(false);
-            ChipDrawable chipFolderDrawable = ChipDrawable.createFromAttributes(this, null,0, style.Widget_App_Chip);
-            labelOfNote.setChipDrawable(chipFolderDrawable);
+            ChipDrawable chipLabelDrawable = ChipDrawable.createFromAttributes(this, null,0, style.Widget_App_Chip);
+            labelOfNote.setChipDrawable(chipLabelDrawable);
 
-            foldersChips.addView(labelOfNote);
+            labelsChips.addView(labelOfNote);
         }
 
         // OPTIONS CARDS ===========================================================================
 
         // creating label chips on CardView and handle saving note with label ----------------------
-        labelsForChipsToSave = new HashSet<>(folders);
+
+        labelsForChipsToSave = new HashSet<>(labels);
         labelsForChipsToSave.remove("Notes");
         labelsForChipsToSave.remove("All Notes");
+        labelsForChipsToSave.remove("Recycle Bin");
 
         ChipGroup labelsChips = findViewById(id.chip_group_labels_to_save);
 
-        for (String folder : labelsForChipsToSave) {
+        for (String label : labelsForChipsToSave) {
             Chip newChip = new Chip(labelsChips.getContext());
-            newChip.setText(folder);
+            newChip.setText(label);
             labelsChips.addView(newChip);
 
             newChip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    if (note.getFolders().contains(folder)) {
-                        note.getFolders().remove(folder);
+                    if (note.getLabels().contains(label)) {
+                        note.getLabels().remove(label);
                     } else {
-                        note.addFolder(folder);
-                        MainActivity.folders.add(folder);
+                        note.addLabel(label);
+                        MainActivity.labels.add(label);
 
                     }
 
@@ -276,10 +276,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                     String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
 
-                    SharedPreferences sharedPreferencesFolders = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                    Gson gsonFolders = new Gson();
-                    String jsonFolders = gsonFolders.toJson(MainActivity.folders);
-                    sharedPreferencesFolders.edit().putString("Folders", jsonFolders).apply();
+                    SharedPreferences sharedPreferencesLabels = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
+                    Gson gsonLabels = new Gson();
+                    String jsonLabels = gsonLabels.toJson(MainActivity.labels);
+                    sharedPreferencesLabels.edit().putString("Labels", jsonLabels).apply();
 
                     startActivity(getIntent());
                     finish();
@@ -300,11 +300,11 @@ public class NoteEditorActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     labelsChips.removeView(newChip);
-                                    MainActivity.folders.remove(folder);
+                                    MainActivity.labels.remove(label);
 
                                     for (Note note : MainActivity.allNotes) {
-                                        if (note.getFolders().contains(folder)) {
-                                            note.getFolders().remove(folder);
+                                        if (note.getLabels().contains(label)) {
+                                            note.getLabels().remove(label);
                                         }
                                     }
 
@@ -313,10 +313,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                                     String json = gson.toJson(MainActivity.allNotes);
                                     sharedPreferences.edit().putString("Notes", json).apply();
 
-                                    SharedPreferences sharedPreferencesFolders = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                                    Gson gsonFolders = new Gson();
-                                    String jsonFolders = gsonFolders.toJson(MainActivity.folders);
-                                    sharedPreferencesFolders.edit().putString("Folders", jsonFolders).apply();
+                                    SharedPreferences sharedPreferencesLabels = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
+                                    Gson gsonLabels = new Gson();
+                                    String jsonLabels = gsonLabels.toJson(MainActivity.labels);
+                                    sharedPreferencesLabels.edit().putString("Labels", jsonLabels).apply();
 
                                     startActivity(getIntent());
                                     finish();
@@ -330,7 +330,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             });
         }
 
-        // button to add the folder ----------------------------------------------------------------
+        // button to add the label -----------------------------------------------------------------
         FloatingActionButton addLabelButton;
         addLabelButton = findViewById(id.add_label_button);
         addLabelButton.setOnClickListener(new View.OnClickListener() {
@@ -340,14 +340,14 @@ public class NoteEditorActivity extends AppCompatActivity {
                 String newLabel = editText.getText().toString();
 
                 if( newLabel != "") {
-                    if (!MainActivity.folders.contains(newLabel)) {
-                        MainActivity.folders.add(newLabel);
+                    if (!MainActivity.labels.contains(newLabel)) {
+                        MainActivity.labels.add(newLabel);
                         labelsForChipsToSave.add(newLabel);
                     }
-                    SharedPreferences foldersPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
+                    SharedPreferences labelsPreferences = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.folders);
-                    foldersPreferences.edit().putString("Folders", json).apply();
+                    String json = gson.toJson(MainActivity.labels);
+                    labelsPreferences.edit().putString("Labels", json).apply();
 
                     Chip newChip = new Chip(labelsChips.getContext());
                     newChip.setText(newLabel);
@@ -360,7 +360,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                     overridePendingTransition(0,0);
 
                     noteAdapter.notifyDataSetChanged();
-
                 }
                 editText.getText().clear();
             }

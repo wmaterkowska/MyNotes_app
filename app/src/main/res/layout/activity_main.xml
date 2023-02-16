@@ -161,9 +161,9 @@
     </androidx.cardview.widget.CardView>
 
 
-    <!-- CardView for choosing folders ********************************************************* -->
+    <!-- CardView for choosing what selection of notes to show ********************************* -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/folders_card"
+        android:id="@+id/labels_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

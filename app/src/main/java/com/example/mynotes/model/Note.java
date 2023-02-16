@@ -3,7 +3,6 @@ package com.example.mynotes.model;
 import android.os.Build;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -15,14 +14,14 @@ public class Note {
     private String content;
     private String backgroundColor;
     private String dateTime;
-    private Set<String> folders = new HashSet<>();
+    private Set<String> labels = new HashSet<>();
 
     public Note(String content) {
         this.title = "";
         this.content = content;
         id = new Random().nextInt();
-        folders.add("Notes");
-        folders.add("All Notes");
+        labels.add("Notes");
+        labels.add("All Notes");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dateTime = LocalDateTime.now().toString();
         }
@@ -62,16 +61,16 @@ public class Note {
         this.dateTime = dateTime;
     }
 
-    public Set<String> getFolders() {
-        return folders;
+    public Set<String> getLabels() {
+        return labels;
     }
 
-    public void setFolders(Set<String> folders) {
-        this.folders = folders;
+    public void setLabels(Set<String> labels) {
+        this.labels = labels;
     }
 
-    public void addFolder(String folder) {
-        this.folders.add(folder);
+    public void addLabel(String label) {
+        this.labels.add(label);
     }
 
 
