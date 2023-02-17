@@ -36,6 +36,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,14 +44,14 @@ import java.util.Set;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
-    static int notePosition;
-    static Note note;
+    private static int notePosition;
+    private static Note note;
 
-    CardView colorPalette;
-    CardView saveToLabel;
+    private CardView colorPalette;
+    private CardView saveToLabel;
 
-    Set<String> labelsOfNote;
-    Set<String> labelsForChipsToSave;
+    private Set<String> labelsOfNote;
+    private Set<String> labelsForChipsToSave;
 
 
     @Override
@@ -246,8 +247,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         // OPTIONS CARDS ===========================================================================
 
         // creating label chips on CardView and handle saving note with label ----------------------
-
-        labelsForChipsToSave = new HashSet<>(labels);
+        labelsForChipsToSave = new HashSet<>(MainActivity.labels);
         labelsForChipsToSave.remove("Notes");
         labelsForChipsToSave.remove("All Notes");
         labelsForChipsToSave.remove("Recycle Bin");
@@ -267,19 +267,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                         note.getLabels().remove(label);
                     } else {
                         note.addLabel(label);
-                        MainActivity.labels.add(label);
-
                     }
 
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
                     String json = gson.toJson(MainActivity.allNotes);
                     sharedPreferences.edit().putString("Notes", json).apply();
-
-                    SharedPreferences sharedPreferencesLabels = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
-                    Gson gsonLabels = new Gson();
-                    String jsonLabels = gsonLabels.toJson(MainActivity.labels);
-                    sharedPreferencesLabels.edit().putString("Labels", jsonLabels).apply();
 
                     startActivity(getIntent());
                     finish();
@@ -354,10 +347,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                     labelsChips.addView(newChip);
                     labelsChips.childDrawableStateChanged(newChip);
                     labelsChips.refreshDrawableState();
-
-                    startActivity(getIntent());
-                    finish();
-                    overridePendingTransition(0,0);
 
                     noteAdapter.notifyDataSetChanged();
                 }

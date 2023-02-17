@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private static BottomAppBar bottomAppBar;
 
     String label = "Notes";
-    public  static ArrayList<String> labels = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
+    public static ArrayList<String> labels = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
 
     public ListView getListView() {
         return listView;
@@ -192,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);

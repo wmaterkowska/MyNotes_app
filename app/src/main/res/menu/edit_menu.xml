@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/save_to_label"
-        android:title="Save to Folder"
+        android:title="Save with Label"
         app:showAsAction="always"
         android:icon="@drawable/ic_baseline_label_24">
     </item>
