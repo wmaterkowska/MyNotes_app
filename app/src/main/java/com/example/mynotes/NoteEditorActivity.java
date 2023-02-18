@@ -1,6 +1,5 @@
 package com.example.mynotes;
 
-import static com.example.mynotes.MainActivity.labels;
 import static com.example.mynotes.MainActivity.noteAdapter;
 import static com.example.mynotes.R.*;
 
@@ -29,6 +28,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.mynotes.model.Note;
+import com.example.mynotes.services.LabelsContainer;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
@@ -247,7 +247,10 @@ public class NoteEditorActivity extends AppCompatActivity {
         // OPTIONS CARDS ===========================================================================
 
         // creating label chips on CardView and handle saving note with label ----------------------
-        labelsForChipsToSave = new HashSet<>(MainActivity.labels);
+        LabelsContainer labelsContainer = new LabelsContainer(getApplicationContext());
+        ArrayList<String> labels = labelsContainer.getLabels();
+
+        labelsForChipsToSave = new HashSet<>(labels);
         labelsForChipsToSave.remove("Notes");
         labelsForChipsToSave.remove("All Notes");
         labelsForChipsToSave.remove("Recycle Bin");
@@ -293,7 +296,8 @@ public class NoteEditorActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     labelsChips.removeView(newChip);
-                                    MainActivity.labels.remove(label);
+                                    labels.remove(label);
+                                    labelsContainer.setLabels(labels);
 
                                     for (Note note : MainActivity.allNotes) {
                                         if (note.getLabels().contains(label)) {
@@ -308,7 +312,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                                     SharedPreferences sharedPreferencesLabels = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
                                     Gson gsonLabels = new Gson();
-                                    String jsonLabels = gsonLabels.toJson(MainActivity.labels);
+                                    String jsonLabels = gsonLabels.toJson(labels);
                                     sharedPreferencesLabels.edit().putString("Labels", jsonLabels).apply();
 
                                     startActivity(getIntent());
@@ -323,7 +327,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             });
         }
 
-        // button to add the label -----------------------------------------------------------------
+        // button to add the new label -------------------------------------------------------------
         FloatingActionButton addLabelButton;
         addLabelButton = findViewById(id.add_label_button);
         addLabelButton.setOnClickListener(new View.OnClickListener() {
@@ -333,13 +337,16 @@ public class NoteEditorActivity extends AppCompatActivity {
                 String newLabel = editText.getText().toString();
 
                 if( newLabel != "") {
-                    if (!MainActivity.labels.contains(newLabel)) {
-                        MainActivity.labels.add(newLabel);
+                    if (!labels.contains(newLabel)) {
+                        labels.add(newLabel);
                         labelsForChipsToSave.add(newLabel);
                     }
+
+                    labelsContainer.setLabels(labels);
+
                     SharedPreferences labelsPreferences = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
                     Gson gson = new Gson();
-                    String json = gson.toJson(MainActivity.labels);
+                    String json = gson.toJson(labels);
                     labelsPreferences.edit().putString("Labels", json).apply();
 
                     Chip newChip = new Chip(labelsChips.getContext());
@@ -348,6 +355,10 @@ public class NoteEditorActivity extends AppCompatActivity {
                     labelsChips.childDrawableStateChanged(newChip);
                     labelsChips.refreshDrawableState();
 
+                    startActivity(getIntent());
+                    finish();
+                    overridePendingTransition(0,0);
+
                     noteAdapter.notifyDataSetChanged();
                 }
                 editText.getText().clear();
@@ -355,7 +366,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         });
 
-
+        // colors card =============================================================================
         // fabs for changing color -----------------------------------------------------------------
         Map<Integer, String> colors = new HashMap<>();
         colors.put(id.pink, "#E8B2B5");

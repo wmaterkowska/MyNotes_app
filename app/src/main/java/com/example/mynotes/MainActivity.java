@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.example.mynotes.adapters.NoteAdapter;
 import com.example.mynotes.model.Note;
+import com.example.mynotes.services.LabelsContainer;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private static CardView labelsCard;
     private static BottomAppBar bottomAppBar;
 
-    String label = "Notes";
-    public static ArrayList<String> labels = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
+    private String label = "Notes";
+    // public static ArrayList<String> labels = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
 
     public ListView getListView() {
         return listView;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.labels:
+                labelsCard.refreshDrawableState();
                 labelsCard = findViewById(R.id.labels_card);
                 if (labelsCard.getVisibility() == View.INVISIBLE) {
                     labelsCard.setVisibility(View.VISIBLE);
@@ -181,17 +183,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // getting labels from sharedPreferences --------------------------------------------------
-        SharedPreferences labelsPreferences = getApplicationContext().getSharedPreferences("com.example.labels", Context.MODE_PRIVATE);
-        String jsonLabelsFromPref = labelsPreferences.getString("Labels", null);
-        Set<String> gsonLabels = gson.fromJson(jsonLabelsFromPref, Set.class);
 
-        if (gsonLabels != null) {
-            for (String label : gsonLabels) {
-                if (!labels.contains(label)) {
-                    labels.add(label);
-                }
-            }
-        }
+        LabelsContainer labelsContainer = new LabelsContainer(getApplicationContext());
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
@@ -310,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        // set the mode card =======================================================================
         // floating action button: set the light mode ----------------------------------------------
         FloatingActionButton fabLight = findViewById(R.id.light);
         fabLight.setOnClickListener(new View.OnClickListener() {
@@ -344,8 +338,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // choose the selection of notes to show card ==============================================
         // chips for choosing selection of notes to show -------------------------------------------
-        for (String label : labels) {
+        for (String label : labelsContainer.getLabels()) {
             ChipGroup labelsChips = findViewById(R.id.chip_group);
             Chip newChip = new Chip(labelsChips.getContext());
             newChip.setText(label);
