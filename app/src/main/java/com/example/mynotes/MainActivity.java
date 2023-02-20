@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -28,6 +31,7 @@ import android.widget.Toast;
 
 
 import com.example.mynotes.adapters.NoteAdapter;
+import com.example.mynotes.fragments.LabelsFragment;
 import com.example.mynotes.model.Note;
 import com.example.mynotes.services.LabelsContainer;
 import com.google.android.material.bottomappbar.BottomAppBar;
@@ -51,19 +55,16 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Note> allNotes = new ArrayList<>();
     public static ArrayList<Note> notesToShow = new ArrayList<>();
 
-    static NoteAdapter noteAdapter;
+    public static NoteAdapter noteAdapter;
     public  static ListView listView;
 
     private static CardView themeChange;
     private static CardView labelsCard;
     private static BottomAppBar bottomAppBar;
+    private static Fragment labelsFragment;
 
     private String label = "Notes";
     // public static ArrayList<String> labels = new ArrayList<>(Arrays.asList("Notes", "Recycle Bin", "All Notes"));
-
-    public ListView getListView() {
-        return listView;
-    }
 
 
     // TOP MENU ====================================================================================
@@ -111,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.labels:
-                labelsCard.refreshDrawableState();
+                labelsFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container_view_labels);
+                labelsFragment.getView().invalidate();
                 labelsCard = findViewById(R.id.labels_card);
                 if (labelsCard.getVisibility() == View.INVISIBLE) {
                     labelsCard.setVisibility(View.VISIBLE);
@@ -154,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Collections.reverse(allNotes);
 
+
         // getting users choice of light/dark mode from SharedPreferences --------------------------
             SharedPreferences settingsPreferences = getApplicationContext().getSharedPreferences("com.example.settings", Context.MODE_PRIVATE);
             int choice = settingsPreferences.getInt("Mode", 0);
@@ -182,9 +185,6 @@ public class MainActivity extends AppCompatActivity {
             allNotes = notesJson;
         }
 
-        // getting labels from sharedPreferences --------------------------------------------------
-
-        LabelsContainer labelsContainer = new LabelsContainer(getApplicationContext());
 
         // list view of the notes ------------------------------------------------------------------
         listView = findViewById(R.id.listView);
@@ -338,41 +338,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // choose the selection of notes to show card ==============================================
-        // chips for choosing selection of notes to show -------------------------------------------
-        for (String label : labelsContainer.getLabels()) {
-            ChipGroup labelsChips = findViewById(R.id.chip_group);
-            Chip newChip = new Chip(labelsChips.getContext());
-            newChip.setText(label);
-            labelsChips.addView(newChip);
 
-            if (label == "Recycle Bin" || label == "All Notes") {
-                newChip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        notesToShow.clear();
-                        for (Note note : allNotes) {
-                            if (note.getLabels().contains(label)) {
-                                notesToShow.add(note);
-                            }
-                        }
-                        listView.setAdapter(noteAdapter);
-                    }
-                });
-            } else {
-                newChip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        notesToShow.clear();
-                        for (Note note : allNotes) {
-                            if (note.getLabels().contains(label) && !note.getLabels().contains("Recycle Bin")) {
-                                notesToShow.add(note);
-                            }
-                        }
-                        listView.setAdapter(noteAdapter);
-                    }
-                });
-            }
+        // fragment for choosing what selection of notes to show ===================================
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_container_view_labels, LabelsFragment.class, null)
+                    .commit();
         }
 
 
